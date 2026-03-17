@@ -1,0 +1,299 @@
+[
+  {
+    "round": 1,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 2.148977354233416,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 1.3357601197824658,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": true,
+        "success": false,
+        "delay": 38.84641098788026,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 16.78128094757189,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 13.359952076491584,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 13.131020865098373,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      }
+    }
+  },
+  {
+    "round": 2,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 9.26563847087896,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 12.129325721281036,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 30.14194569345779,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 7.162884058853463,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 1.4482721427707441,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 23.52974113571137,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      }
+    }
+  },
+  {
+    "round": 3,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 19.041641094392382,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 34.34358057864268,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 8.716442734844334,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 2.471075322776703,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 1.4122360158871943,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 8.957019646764197,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      }
+    }
+  },
+  {
+    "round": 4,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        1,
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 3.8188122188826807,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 15.265917137769017,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      },
+      "0-2": {
+        "available": true,
+        "success": false,
+        "delay": 1.85794522162286,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 24.863900730466852,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 16.777314983178155,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 0.187939703513019,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      }
+    }
+  },
+  {
+    "round": 5,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 24.201850555550212,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 30.534904392053306,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 20.36456730362963,
+        "packet_loss": 0.05,
+        "contact_duration": 2
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 3.5258976335285177,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 5.265088038481178,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.913252458790376,
+        "packet_loss": 0.025,
+        "contact_duration": 2
+      }
+    }
+  }
+]

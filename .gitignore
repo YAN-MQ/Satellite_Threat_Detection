@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# NS-3
+*.o
+*.a
+*.so
+*.dylib
+ns3/
+build/
+
+# Data
+*.pcap
+*.pcapng
+*.csv
+dataset/
+fragments/
+captured/
+data/
+
+# Model
+*.pth
+*.pt
+*.h5
+models/
+checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

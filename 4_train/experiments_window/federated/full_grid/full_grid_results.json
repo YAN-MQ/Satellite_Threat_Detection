@@ -1,0 +1,1086 @@
+{
+  "best_test_accuracy": 0.971838,
+  "runs": {
+    "OrbitShield_FL_beta01_warm1_gm01": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 1,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.966046,
+        "final_test_metrics": {
+          "loss": 0.14230404849569228,
+          "accuracy": 0.9422127400182871,
+          "precision": 0.946452117656317,
+          "recall": 0.9422127400182871,
+          "f1": 0.9416648885372219,
+          "confusion_matrix": [
+            [
+              10995,
+              0,
+              91
+            ],
+            [
+              315,
+              9161,
+              1256
+            ],
+            [
+              208,
+              26,
+              10758
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm1_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm1_gm02": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 1,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.975342,
+        "final_test_metrics": {
+          "loss": 0.11258005819770092,
+          "accuracy": 0.9525449558061566,
+          "precision": 0.9543340913585713,
+          "recall": 0.9525449558061566,
+          "f1": 0.9524077612055543,
+          "confusion_matrix": [
+            [
+              10833,
+              0,
+              253
+            ],
+            [
+              335,
+              9656,
+              741
+            ],
+            [
+              95,
+              133,
+              10764
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm1_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm1_gm03": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 1,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.967753,
+        "final_test_metrics": {
+          "loss": 0.1397120752575122,
+          "accuracy": 0.9447729350807681,
+          "precision": 0.9484087891272913,
+          "recall": 0.9447729350807681,
+          "f1": 0.9443989587645627,
+          "confusion_matrix": [
+            [
+              10861,
+              0,
+              225
+            ],
+            [
+              392,
+              9306,
+              1034
+            ],
+            [
+              111,
+              50,
+              10831
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm1_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm2_gm01": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 2,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.978512,
+        "final_test_metrics": {
+          "loss": 0.07447987075054989,
+          "accuracy": 0.9718378543127095,
+          "precision": 0.9719416822374689,
+          "recall": 0.9718378543127095,
+          "f1": 0.9717687182482806,
+          "confusion_matrix": [
+            [
+              11007,
+              12,
+              67
+            ],
+            [
+              148,
+              10423,
+              161
+            ],
+            [
+              222,
+              314,
+              10456
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm2_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm2_gm02": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 2,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.972355,
+        "final_test_metrics": {
+          "loss": 0.1005316981682464,
+          "accuracy": 0.9591892715635477,
+          "precision": 0.9610000906639958,
+          "recall": 0.9591892715635477,
+          "f1": 0.9589886574004622,
+          "confusion_matrix": [
+            [
+              11009,
+              4,
+              73
+            ],
+            [
+              243,
+              9693,
+              796
+            ],
+            [
+              199,
+              24,
+              10769
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm2_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm2_gm03": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 2,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.965528,
+        "final_test_metrics": {
+          "loss": 0.13015797015272293,
+          "accuracy": 0.9459920755867114,
+          "precision": 0.9496777787105263,
+          "recall": 0.9459920755867114,
+          "f1": 0.9454437017020283,
+          "confusion_matrix": [
+            [
+              11007,
+              0,
+              79
+            ],
+            [
+              360,
+              9245,
+              1127
+            ],
+            [
+              192,
+              14,
+              10786
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm2_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm3_gm01": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 3,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.97775,
+        "final_test_metrics": {
+          "loss": 0.09735675362477014,
+          "accuracy": 0.9602864980188967,
+          "precision": 0.9606223604626533,
+          "recall": 0.9602864980188967,
+          "f1": 0.9602181347617595,
+          "confusion_matrix": [
+            [
+              10891,
+              1,
+              194
+            ],
+            [
+              291,
+              10008,
+              433
+            ],
+            [
+              139,
+              245,
+              10608
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm3_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm3_gm02": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 3,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.96949,
+        "final_test_metrics": {
+          "loss": 0.1327624526303507,
+          "accuracy": 0.9465102103017373,
+          "precision": 0.9498784228617978,
+          "recall": 0.9465102103017373,
+          "f1": 0.946132634947106,
+          "confusion_matrix": [
+            [
+              10904,
+              0,
+              182
+            ],
+            [
+              369,
+              9339,
+              1024
+            ],
+            [
+              134,
+              46,
+              10812
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm3_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta01_warm3_gm03": {
+      "config": {
+        "beta": 0.1,
+        "warmup_rounds": 3,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.969216,
+        "final_test_metrics": {
+          "loss": 0.13449911254775992,
+          "accuracy": 0.9444681499542822,
+          "precision": 0.9485427359979189,
+          "recall": 0.9444681499542822,
+          "f1": 0.9440988236626945,
+          "confusion_matrix": [
+            [
+              10886,
+              0,
+              200
+            ],
+            [
+              341,
+              9269,
+              1122
+            ],
+            [
+              132,
+              27,
+              10833
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta01_warm3_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm1_gm01": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 1,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.952056,
+        "final_test_metrics": {
+          "loss": 0.17252524678443645,
+          "accuracy": 0.9214568729046022,
+          "precision": 0.9319051120653324,
+          "recall": 0.9214568729046022,
+          "f1": 0.9216483085162132,
+          "confusion_matrix": [
+            [
+              10383,
+              0,
+              703
+            ],
+            [
+              340,
+              8905,
+              1487
+            ],
+            [
+              32,
+              15,
+              10945
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm1_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm1_gm02": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 1,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.96504,
+        "final_test_metrics": {
+          "loss": 0.14274227320564067,
+          "accuracy": 0.9380676622980798,
+          "precision": 0.942989725202274,
+          "recall": 0.9380676622980798,
+          "f1": 0.9380872028128016,
+          "confusion_matrix": [
+            [
+              10573,
+              0,
+              513
+            ],
+            [
+              361,
+              9343,
+              1028
+            ],
+            [
+              57,
+              73,
+              10862
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm1_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm1_gm03": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 1,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.971319,
+        "final_test_metrics": {
+          "loss": 0.12455350109167027,
+          "accuracy": 0.9498323681804328,
+          "precision": 0.9518033207723018,
+          "recall": 0.9498323681804328,
+          "f1": 0.9495560440745587,
+          "confusion_matrix": [
+            [
+              10878,
+              0,
+              208
+            ],
+            [
+              410,
+              9535,
+              787
+            ],
+            [
+              116,
+              125,
+              10751
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm1_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm2_gm01": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 2,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.972538,
+        "final_test_metrics": {
+          "loss": 0.1046593248437252,
+          "accuracy": 0.9575129533678757,
+          "precision": 0.9596347686134483,
+          "recall": 0.9575129533678757,
+          "f1": 0.957326302274138,
+          "confusion_matrix": [
+            [
+              10971,
+              4,
+              111
+            ],
+            [
+              246,
+              9649,
+              837
+            ],
+            [
+              177,
+              19,
+              10796
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm2_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm2_gm02": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 2,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.976196,
+        "final_test_metrics": {
+          "loss": 0.09164124682454616,
+          "accuracy": 0.9647668393782384,
+          "precision": 0.9657076788713561,
+          "recall": 0.9647668393782384,
+          "f1": 0.9646433942041479,
+          "confusion_matrix": [
+            [
+              11036,
+              5,
+              45
+            ],
+            [
+              225,
+              9923,
+              584
+            ],
+            [
+              242,
+              55,
+              10695
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm2_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm2_gm03": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 2,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.972904,
+        "final_test_metrics": {
+          "loss": 0.0839391397621932,
+          "accuracy": 0.9659250228588845,
+          "precision": 0.9665632858665372,
+          "recall": 0.9659250228588845,
+          "f1": 0.9658281485737812,
+          "confusion_matrix": [
+            [
+              11060,
+              1,
+              25
+            ],
+            [
+              320,
+              10059,
+              353
+            ],
+            [
+              281,
+              138,
+              10573
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm2_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm3_gm01": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 3,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.966107,
+        "final_test_metrics": {
+          "loss": 0.14555816745764524,
+          "accuracy": 0.9377323986589454,
+          "precision": 0.9434825930135291,
+          "recall": 0.9377323986589454,
+          "f1": 0.9376389023805006,
+          "confusion_matrix": [
+            [
+              10668,
+              0,
+              418
+            ],
+            [
+              329,
+              9214,
+              1189
+            ],
+            [
+              82,
+              25,
+              10885
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm3_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm3_gm02": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 3,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.974946,
+        "final_test_metrics": {
+          "loss": 0.09452780701592557,
+          "accuracy": 0.9615361170374885,
+          "precision": 0.9617458990003342,
+          "recall": 0.9615361170374885,
+          "f1": 0.961416903863912,
+          "confusion_matrix": [
+            [
+              10995,
+              1,
+              90
+            ],
+            [
+              314,
+              10062,
+              356
+            ],
+            [
+              211,
+              290,
+              10491
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm3_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta02_warm3_gm03": {
+      "config": {
+        "beta": 0.2,
+        "warmup_rounds": 3,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.972569,
+        "final_test_metrics": {
+          "loss": 0.11708588583709484,
+          "accuracy": 0.9522706491923194,
+          "precision": 0.9540983730351695,
+          "recall": 0.9522706491923194,
+          "f1": 0.9520090014489181,
+          "confusion_matrix": [
+            [
+              10923,
+              0,
+              163
+            ],
+            [
+              366,
+              9581,
+              785
+            ],
+            [
+              142,
+              110,
+              10740
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta02_warm3_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm1_gm01": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 1,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.971319,
+        "final_test_metrics": {
+          "loss": 0.12202827316262486,
+          "accuracy": 0.9470893020420603,
+          "precision": 0.9499166295548909,
+          "recall": 0.9470893020420603,
+          "f1": 0.9470099255007033,
+          "confusion_matrix": [
+            [
+              10734,
+              0,
+              352
+            ],
+            [
+              341,
+              9539,
+              852
+            ],
+            [
+              87,
+              104,
+              10801
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm1_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm1_gm02": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 1,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.971928,
+        "final_test_metrics": {
+          "loss": 0.12106695687668063,
+          "accuracy": 0.9506857665345931,
+          "precision": 0.9527504049663674,
+          "recall": 0.9506857665345931,
+          "f1": 0.9504274517848718,
+          "confusion_matrix": [
+            [
+              10868,
+              0,
+              218
+            ],
+            [
+              410,
+              9549,
+              773
+            ],
+            [
+              114,
+              103,
+              10775
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm1_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm1_gm03": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 1,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.966808,
+        "final_test_metrics": {
+          "loss": 0.1478943194274685,
+          "accuracy": 0.9395306309052118,
+          "precision": 0.9447676527641636,
+          "recall": 0.9395306309052118,
+          "f1": 0.9393128990009169,
+          "confusion_matrix": [
+            [
+              10737,
+              0,
+              349
+            ],
+            [
+              346,
+              9210,
+              1176
+            ],
+            [
+              83,
+              30,
+              10879
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm1_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm2_gm01": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 2,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.977994,
+        "final_test_metrics": {
+          "loss": 0.085236174380279,
+          "accuracy": 0.9678146906430967,
+          "precision": 0.9682159119135955,
+          "recall": 0.9678146906430967,
+          "f1": 0.9677401671117688,
+          "confusion_matrix": [
+            [
+              11013,
+              11,
+              62
+            ],
+            [
+              190,
+              10094,
+              448
+            ],
+            [
+              222,
+              123,
+              10647
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm2_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm2_gm02": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 2,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.972904,
+        "final_test_metrics": {
+          "loss": 0.10274702405803154,
+          "accuracy": 0.9588844864370619,
+          "precision": 0.960549048251341,
+          "recall": 0.9588844864370619,
+          "f1": 0.9587270215247411,
+          "confusion_matrix": [
+            [
+              10950,
+              4,
+              132
+            ],
+            [
+              288,
+              9735,
+              709
+            ],
+            [
+              178,
+              38,
+              10776
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm2_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm2_gm03": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 2,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.9701,
+        "final_test_metrics": {
+          "loss": 0.11117395191489393,
+          "accuracy": 0.9534897896982627,
+          "precision": 0.9558838585803245,
+          "recall": 0.9534897896982627,
+          "f1": 0.9531777147731186,
+          "confusion_matrix": [
+            [
+              11000,
+              1,
+              85
+            ],
+            [
+              314,
+              9524,
+              894
+            ],
+            [
+              206,
+              26,
+              10760
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm2_gm03/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm3_gm01": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 3,
+        "global_momentum": 0.1
+      },
+      "result": {
+        "best_val_accuracy": 0.963729,
+        "final_test_metrics": {
+          "loss": 0.11360368125802542,
+          "accuracy": 0.9524839987808595,
+          "precision": 0.9536228159336987,
+          "recall": 0.9524839987808595,
+          "f1": 0.952180649603725,
+          "confusion_matrix": [
+            [
+              11067,
+              0,
+              19
+            ],
+            [
+              451,
+              9694,
+              587
+            ],
+            [
+              312,
+              190,
+              10490
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm3_gm01/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm3_gm02": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 3,
+        "global_momentum": 0.2
+      },
+      "result": {
+        "best_val_accuracy": 0.973087,
+        "final_test_metrics": {
+          "loss": 0.0983544302457504,
+          "accuracy": 0.9603474550441938,
+          "precision": 0.9606069897412678,
+          "recall": 0.9603474550441938,
+          "f1": 0.9602181223095752,
+          "confusion_matrix": [
+            [
+              11003,
+              1,
+              82
+            ],
+            [
+              364,
+              10050,
+              318
+            ],
+            [
+              214,
+              322,
+              10456
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm3_gm02/best_global_model.pt"
+      }
+    },
+    "OrbitShield_FL_beta03_warm3_gm03": {
+      "config": {
+        "beta": 0.3,
+        "warmup_rounds": 3,
+        "global_momentum": 0.3
+      },
+      "result": {
+        "best_val_accuracy": 0.971624,
+        "final_test_metrics": {
+          "loss": 0.12897168064174583,
+          "accuracy": 0.9462968607131972,
+          "precision": 0.9498380027614193,
+          "recall": 0.9462968607131972,
+          "f1": 0.9460828355082928,
+          "confusion_matrix": [
+            [
+              10831,
+              0,
+              255
+            ],
+            [
+              325,
+              9396,
+              1011
+            ],
+            [
+              125,
+              46,
+              10821
+            ]
+          ],
+          "label_distribution": {
+            "0": 11086,
+            "1": 10732,
+            "2": 10992
+          }
+        },
+        "best_model_path": "experiments_window/federated/full_grid/OrbitShield_FL_beta03_warm3_gm03/best_global_model.pt"
+      }
+    }
+  },
+  "best_variant_name": "OrbitShield_FL_beta01_warm2_gm01"
+}

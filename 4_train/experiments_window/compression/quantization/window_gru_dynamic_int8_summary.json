@@ -1,0 +1,66 @@
+{
+  "compression": "dynamic_quantization_int8",
+  "checkpoint_in": "checkpoints_gru/window_gru_best.pt",
+  "checkpoint_out": "experiments_window/compression/quantization/window_gru_dynamic_int8.pt",
+  "baseline": {
+    "accuracy": 0.9886010362694301,
+    "precision": 0.9886759071853685,
+    "recall": 0.9886010362694301,
+    "f1": 0.988615704036559,
+    "confusion_matrix": [
+      [
+        10935,
+        22,
+        129
+      ],
+      [
+        7,
+        10607,
+        118
+      ],
+      [
+        76,
+        22,
+        10894
+      ]
+    ],
+    "inference_time_sec": 0.3991356690021348,
+    "latency_ms_per_batch": 79.82713380042696,
+    "latency_ms_per_sample": 0.1559123707039589,
+    "throughput_samples_per_sec": 6413.859243400037,
+    "parameter_count": 33329,
+    "total_weight_elements": 33329,
+    "nonzero_weight_elements": 33329,
+    "sparsity": 0.0,
+    "checkpoint_size_mb": 0.13425064086914062
+  },
+  "quantized": {
+    "accuracy": 0.9887839073453215,
+    "precision": 0.988849900629955,
+    "recall": 0.9887839073453215,
+    "f1": 0.9887973612388196,
+    "confusion_matrix": [
+      [
+        10940,
+        20,
+        126
+      ],
+      [
+        8,
+        10611,
+        113
+      ],
+      [
+        75,
+        26,
+        10891
+      ]
+    ],
+    "inference_time_sec": 0.04755233299874817,
+    "latency_ms_per_batch": 9.510466599749634,
+    "latency_ms_per_sample": 0.018575130077636004,
+    "throughput_samples_per_sec": 53835.42380701684,
+    "parameter_count": 33329,
+    "checkpoint_size_mb": 0.053371429443359375
+  }
+}
