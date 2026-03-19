@@ -1,0 +1,244 @@
+{
+  "config": {
+    "dataset": "sti",
+    "data_dir": "../dataset_sti",
+    "output_dir": "experiments/OrbitShield_FL/sti",
+    "method": "full",
+    "num_clients": 12,
+    "num_planes": 3,
+    "rounds": 20,
+    "local_epochs": 1,
+    "batch_size": 512,
+    "input_dim": 20,
+    "num_classes": 8,
+    "hidden_dim": 64,
+    "bidirectional": false,
+    "dropout": 0.3,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "init_checkpoint": "checkpoints_gru/sti_gru_best.pt",
+    "max_samples": null,
+    "partition_mode": "dirichlet",
+    "dirichlet_alpha": 0.3,
+    "beta": 0.1,
+    "beta_floor": 0.05,
+    "lambda_s": 0.1,
+    "rho": 0.5,
+    "mu": 0.8,
+    "global_momentum": 0.1,
+    "warmup_rounds": 2,
+    "r_min": 0.1,
+    "seed": 42,
+    "device": "cuda",
+    "intra_plane_success_prob": 0.98,
+    "inter_plane_success_prob": 0.75,
+    "inter_plane_contact_period": 4,
+    "inter_plane_contact_duration": 2,
+    "packet_loss_prob": 0.05,
+    "link_delay_mean": 25.0,
+    "stable_score_weights": [
+      0.4,
+      0.4,
+      0.2
+    ],
+    "class_names": [
+      "Benign",
+      "Signal Disruption",
+      "UDP flood",
+      "Jamming",
+      "Bruteforce",
+      "Infiltration",
+      "DoS",
+      "DDoS"
+    ]
+  },
+  "device": "cuda",
+  "best_model_path": "experiments/OrbitShield_FL/sti/best_global_model.pt",
+  "final_round": {
+    "round": 20,
+    "val_loss": 0.019883,
+    "val_accuracy": 0.991837,
+    "val_precision": 0.991897,
+    "val_recall": 0.991837,
+    "val_f1": 0.99182,
+    "test_accuracy": 0.991877,
+    "test_precision": 0.991938,
+    "test_recall": 0.991877,
+    "test_f1": 0.991859,
+    "communication_cost_mb": 2.065903,
+    "stale_update_ratio": 0.0,
+    "link_failure_robustness": 0.888889,
+    "confusion_matrix": "[[135097, 0, 93, 49, 390, 75, 1, 0], [0, 30854, 0, 0, 0, 0, 0, 0], [2, 0, 49115, 0, 0, 0, 0, 0], [351, 0, 0, 28115, 0, 173, 0, 0], [0, 0, 0, 0, 39062, 0, 6, 2], [1258, 0, 0, 0, 0, 35257, 0, 0], [0, 0, 0, 0, 0, 0, 49607, 45], [1, 0, 0, 0, 20, 0, 982, 53916]]",
+    "plane_meta": {
+      "0": {
+        "client_weights": {
+          "sat_0": 0.274395511140933,
+          "sat_1": 0.15904815292764962,
+          "sat_2": 0.4272196575607449,
+          "sat_3": 0.13933667837067232
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "1": {
+        "client_weights": {
+          "sat_4": 0.02552841355447331,
+          "sat_5": 0.22942170139227555,
+          "sat_6": 0.4950706690706653,
+          "sat_7": 0.24997921598258574
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "2": {
+        "client_weights": {
+          "sat_8": 0.2964116634801379,
+          "sat_9": 0.188295292496136,
+          "sat_10": 0.4504303392654248,
+          "sat_11": 0.06486270475830115
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      }
+    },
+    "plane_gossip_meta": {
+      "0": {
+        "used_neighbors": [
+          1,
+          2
+        ],
+        "missing_neighbors": [],
+        "adaptive_beta": 0.09033508082945765,
+        "gamma": {
+          "1": 0.5273392681599368,
+          "2": 0.4726607318400632
+        }
+      },
+      "1": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [
+          2
+        ],
+        "adaptive_beta": 0.0837702720057781,
+        "gamma": {
+          "0": 0.6298519597988061,
+          "2": 0.37014804020119385
+        }
+      },
+      "2": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [
+          1
+        ],
+        "adaptive_beta": 0.08156480882367956,
+        "gamma": {
+          "0": 0.3960106354460999,
+          "1": 0.6039893645539001
+        }
+      }
+    }
+  },
+  "final_test_metrics": {
+    "loss": 0.018051532979356136,
+    "accuracy": 0.996148146752075,
+    "precision": 0.9961634690630313,
+    "recall": 0.996148146752075,
+    "f1": 0.9961495658127174,
+    "confusion_matrix": [
+      [
+        134790,
+        0,
+        93,
+        89,
+        387,
+        342,
+        0,
+        4
+      ],
+      [
+        0,
+        30854,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        49113,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        61,
+        0,
+        0,
+        28506,
+        0,
+        72,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        39018,
+        0,
+        2,
+        50
+      ],
+      [
+        168,
+        0,
+        0,
+        69,
+        0,
+        36278,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        49385,
+        267
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        22,
+        0,
+        4,
+        54892
+      ]
+    ],
+    "label_distribution": {
+      "0": 135705,
+      "1": 30854,
+      "2": 49117,
+      "3": 28639,
+      "4": 39070,
+      "5": 36515,
+      "6": 49652,
+      "7": 54919
+    }
+  }
+}

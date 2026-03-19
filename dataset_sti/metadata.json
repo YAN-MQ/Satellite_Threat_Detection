@@ -1,0 +1,110 @@
+{
+  "dataset_name": "STI",
+  "input_shape": [
+    1,
+    20
+  ],
+  "num_features": 20,
+  "num_classes": 8,
+  "feature_columns": [
+    "Duration",
+    "Size",
+    "Protocol",
+    "Sinr",
+    "Throughput",
+    "Flow_bytes_s",
+    "Flow_packets_s",
+    "Inv_mean",
+    "Inv_min",
+    "Inv_max",
+    "DNS_query_id",
+    "L7_protocol",
+    "DNS_type",
+    "TTL_min",
+    "TTL_max",
+    "DNS_TTL_answer",
+    "Next_Current_diff",
+    "Next_Pre_diff",
+    "SNext_Current_diff",
+    "SNext_Pre_diff"
+  ],
+  "splits": {
+    "Benign": {
+      "train": 407115,
+      "val": 135705,
+      "test": 135705,
+      "total": 678525
+    },
+    "Signal Disruption": {
+      "train": 92557,
+      "val": 30852,
+      "test": 30854,
+      "total": 154263
+    },
+    "UDP flood": {
+      "train": 147349,
+      "val": 49116,
+      "test": 49117,
+      "total": 245582
+    },
+    "Jamming": {
+      "train": 85914,
+      "val": 28638,
+      "test": 28639,
+      "total": 143191
+    },
+    "Bruteforce": {
+      "train": 117206,
+      "val": 39068,
+      "test": 39070,
+      "total": 195344
+    },
+    "Infiltration": {
+      "train": 109543,
+      "val": 36514,
+      "test": 36515,
+      "total": 182572
+    },
+    "DoS": {
+      "train": 148953,
+      "val": 49651,
+      "test": 49652,
+      "total": 248256
+    },
+    "DDoS": {
+      "train": 164753,
+      "val": 54917,
+      "test": 54919,
+      "total": 274589
+    }
+  },
+  "label_mapping": {
+    "0": "Benign",
+    "1": "Signal Disruption",
+    "2": "UDP flood",
+    "3": "Jamming",
+    "4": "Bruteforce",
+    "5": "Infiltration",
+    "6": "DoS",
+    "7": "DDoS"
+  },
+  "source_dir": "/home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/STI_dataset",
+  "renormalized": false,
+  "global_shapes": {
+    "train": [
+      1273390,
+      1,
+      20
+    ],
+    "val": [
+      424461,
+      1,
+      20
+    ],
+    "test": [
+      424471,
+      1,
+      20
+    ]
+  }
+}

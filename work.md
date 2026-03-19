@@ -28,7 +28,7 @@
 
 当前已经跑通的完整数据链路为：
 
-`原始 PCAP -> 攻击时间窗口提取 -> IP 分片 -> NS-3 实时仿真 -> 流量捕获 -> 特征提取 -> dataset_window`
+`原始 PCAP -> 攻击时间窗口提取 -> IP 分片 -> NS-3 实时仿真 -> 流量捕获 -> 特征提取 -> dataset_cicids17`
 
 具体工作包括：
 
@@ -41,7 +41,7 @@
 
 - [fragments_window](./fragments_window)
 - [captured_window](./captured_window)
-- [dataset_window](./dataset_window)
+- [dataset_cicids17](./dataset_cicids17)
 
 ### 2.3 特征提取与数据集构造
 
@@ -78,7 +78,7 @@
 - 先切分再归一化
 - 最终输入形状为 `(samples, 10, 18)`
 
-这部分工作确保了后续单体模型和联邦模型可以直接复用同一份 `dataset_window`。
+这部分工作确保了后续单体模型和联邦模型可以直接复用同一份 `dataset_cicids17`。
 
 ## 3. 单体模型训练工作
 
@@ -95,7 +95,7 @@
 - 三分类输出
 
 
-在重新整理数据链路后，我基于新的 `dataset_window` 完整重跑了训练流程，并得到当前主模型结果：
+在重新整理数据链路后，我基于新的 `dataset_cicids17` 完整重跑了训练流程，并得到当前主模型结果：
 
 - 最佳验证精度：`Val Acc = 0.9902`
 - 测试集准确率：`Accuracy = 0.9886`
@@ -103,7 +103,7 @@
 
 对应主模型文件为：
 
-- [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt)
+- [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt)
 
 ### 3.2 对比实验
 
@@ -188,7 +188,7 @@
 其设计原则是：
 
 - 不重写现有单机工程
-- 直接复用当前 `dataset_window`
+- 直接复用当前 `dataset_cicids17`
 - 直接复用当前 `DSC-CBAM-GRU`
 - 采用“算法仿真级联邦”，先在单机上模拟多卫星训练
 
@@ -227,9 +227,9 @@
 
 在工程实现上，我新增了联邦模块目录：
 
-- [4_train/federated](./4_train/federated)
+- [4_train/OrbitShield_FL](./4_train/OrbitShield_FL)
 
-并实现了以下核心模块：
+并实现了以下核心模块，当前代码目录正式命名为 `OrbitShield_FL`：
 
 - `partition.py`：联邦数据划分
 - `client.py`：卫星客户端抽象
@@ -253,12 +253,31 @@
 
 在此基础上，又对完整方案进行了系统网格搜索，最终把正式版本命名为 `OrbitShield_FL`。
 
+当前正式结果目录为：
+
+- [4_train/experiments/OrbitShield_FL/cicids17](./4_train/experiments/OrbitShield_FL/cicids17)
+- [4_train/experiments/OrbitShield_FL/grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
+
 当前最终结果为：
 
 - `Accuracy = 0.9718`
 - `Precision = 0.9719`
 - `Recall = 0.9718`
 - `F1 = 0.9718`
+
+此外，近期还把新增的 `STI` 数据集接入到了同一套联邦框架中。考虑到 `STI` 数据规模显著大于 `cicids17`，我对联邦训练器增加了“验证子集评估 + 最终完整测试 + 固定本地 batch 预算”的工程优化，在不改变联邦框架主体的前提下，跑通了完整 `STI` 联邦实验。
+
+`STI` 的正式结果目录为：
+
+- [4_train/experiments/OrbitShield_FL/sti](./4_train/experiments/OrbitShield_FL/sti)
+
+`STI` 联邦完整结果为：
+
+- `Best Val Acc = 0.9956`
+- `Test Accuracy = 0.9955`
+- `Test Precision = 0.9955`
+- `Test Recall = 0.9955`
+- `Test F1 = 0.9955`
 
 相较历史联邦方法结果：
 
@@ -293,13 +312,15 @@
 - `global_momentum = 0.1`
 - `beta_floor = 0.05`
 
-该配置已被固化为联邦默认 demo 配置。
+该配置已被固化为联邦正式默认配置。
+当前已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的 `full` 正式 preset 中。
+因此，无论是默认联邦入口还是后续 ns-3 联邦入口，只要运行 `--method full`，使用的都是同一套正式最优参数，而不是各自维护不同默认值。
 
 ## 5. 当前阶段成果总结
 
 本阶段已经完成的核心成果可以概括为：
 
-1. 重新梳理并跑通了从原始 PCAP 到 `dataset_window` 的完整仿真链路
+1. 重新梳理并跑通了从原始 PCAP 到 `dataset_cicids17` 的完整仿真链路
 2. 修正了原工程中数据标签、路径、抓包方向和分片逻辑等关键问题
 3. 重新训练并稳定得到单体 `DSC-CBAM-GRU` 主模型，测试准确率达到 `0.9886`
 4. 完成了对比实验、消融实验、t-SNE 可视化和模型压缩实验
@@ -315,5 +336,3 @@
 2. 将联邦训练从算法仿真扩展为更真实的多进程或多机通信原型
 3. 进一步完善论文写作中的方法与实验分析部分
 4. 评估模型在更强数据异质性和更高链路失败率下的鲁棒性
-
-

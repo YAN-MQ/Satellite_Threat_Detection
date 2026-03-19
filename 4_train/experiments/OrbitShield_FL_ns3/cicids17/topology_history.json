@@ -1,0 +1,1382 @@
+[
+  {
+    "round": 1,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        0,
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 23.981307,
+        "packet_loss": 0.049781,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 23.616958,
+        "packet_loss": 0.041684,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 24.093338,
+        "packet_loss": 0.056729,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.588639,
+        "packet_loss": 0.011256,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.05348,
+        "packet_loss": 0.01151,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.474328,
+        "packet_loss": 0.009758,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 498.113045,
+      "1": 500.141648,
+      "2": 509.206779
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 120.779133,
+      "0-2": 125.302568,
+      "1-2": 107.016492
+    }
+  },
+  {
+    "round": 2,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 26.144748,
+        "packet_loss": 0.048566,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 26.846872,
+        "packet_loss": 0.04648,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.182413,
+        "packet_loss": 0.009215,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.635322,
+        "packet_loss": 0.009307,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.514792,
+        "packet_loss": 0.011126,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 515.958856,
+      "1": 546.075987,
+      "2": 499.096948
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 128.132445,
+      "0-2": 123.695903,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 3,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.469126,
+        "packet_loss": 0.008802,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.728838,
+        "packet_loss": 0.010964,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.756678,
+        "packet_loss": 0.009542,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 563.817236,
+      "1": 513.760945,
+      "2": 469.071472
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 4,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 25.344544,
+        "packet_loss": 0.053778,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.335016,
+        "packet_loss": 0.01047,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.877917,
+        "packet_loss": 0.008941,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.263318,
+        "packet_loss": 0.010977,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 513.03005,
+      "1": 446.265889,
+      "2": 429.751625
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 117.510001
+    }
+  },
+  {
+    "round": 5,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        0,
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 25.725318,
+        "packet_loss": 0.059997,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 26.735866,
+        "packet_loss": 0.040536,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": true,
+        "success": false,
+        "delay": 24.682448,
+        "packet_loss": 0.05519,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.521005,
+        "packet_loss": 0.008921,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.290306,
+        "packet_loss": 0.008872,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.470898,
+        "packet_loss": 0.008828,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 460.52484,
+      "1": 450.764971,
+      "2": 503.08203
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 107.382326,
+      "0-2": 114.519381,
+      "1-2": 117.839628
+    }
+  },
+  {
+    "round": 6,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 26.874731,
+        "packet_loss": 0.058699,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 25.305119,
+        "packet_loss": 0.054932,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.374376,
+        "packet_loss": 0.011977,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.659674,
+        "packet_loss": 0.009066,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.030346,
+        "packet_loss": 0.009767,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 510.11576,
+      "1": 429.028265,
+      "2": 460.340958
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 107.925068,
+      "0-2": 133.675945,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 7,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.857061,
+        "packet_loss": 0.010617,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.730729,
+        "packet_loss": 0.009422,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.529276,
+        "packet_loss": 0.008499,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 564.341065,
+      "1": 572.858126,
+      "2": 443.893104
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 8,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 26.486089,
+        "packet_loss": 0.042459,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.771906,
+        "packet_loss": 0.008826,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.074267,
+        "packet_loss": 0.009288,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.363766,
+        "packet_loss": 0.011847,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 501.841958,
+      "1": 438.548235,
+      "2": 531.821305
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 114.645649
+    }
+  },
+  {
+    "round": 9,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        0,
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 25.451381,
+        "packet_loss": 0.040958,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 23.469527,
+        "packet_loss": 0.04384,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 24.349889,
+        "packet_loss": 0.048768,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.811953,
+        "packet_loss": 0.011251,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.913324,
+        "packet_loss": 0.010974,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.475483,
+        "packet_loss": 0.008268,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 456.700475,
+      "1": 493.956074,
+      "2": 496.784285
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 134.52371,
+      "0-2": 119.094248,
+      "1-2": 123.468394
+    }
+  },
+  {
+    "round": 10,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 27.120657,
+        "packet_loss": 0.056261,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 23.627058,
+        "packet_loss": 0.042221,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.744232,
+        "packet_loss": 0.00893,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.916945,
+        "packet_loss": 0.009052,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.61111,
+        "packet_loss": 0.009957,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 519.946488,
+      "1": 573.178495,
+      "2": 485.240331
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 110.52351,
+      "0-2": 135.808212,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 11,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.776956,
+        "packet_loss": 0.010576,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.799108,
+        "packet_loss": 0.008386,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": false,
+        "delay": 9.741392,
+        "packet_loss": 0.010764,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 500.530367,
+      "1": 487.064286,
+      "2": 438.253813
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 12,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 24.219262,
+        "packet_loss": 0.049525,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.182298,
+        "packet_loss": 0.011852,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.51408,
+        "packet_loss": 0.011552,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.572797,
+        "packet_loss": 0.009722,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 454.741479,
+      "1": 487.598131,
+      "2": 544.243879
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 109.522615
+    }
+  },
+  {
+    "round": 13,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        0,
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 23.010333,
+        "packet_loss": 0.054255,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 26.083964,
+        "packet_loss": 0.042017,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": true,
+        "success": false,
+        "delay": 25.423682,
+        "packet_loss": 0.057817,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.798155,
+        "packet_loss": 0.011067,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.789395,
+        "packet_loss": 0.008574,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.701054,
+        "packet_loss": 0.008738,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 477.148865,
+      "1": 521.44415,
+      "2": 569.190166
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 115.358003,
+      "0-2": 134.738021,
+      "1-2": 119.25326
+    }
+  },
+  {
+    "round": 14,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 22.500219,
+        "packet_loss": 0.052129,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 24.192409,
+        "packet_loss": 0.052992,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.547436,
+        "packet_loss": 0.009435,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.135603,
+        "packet_loss": 0.011033,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.265413,
+        "packet_loss": 0.011609,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 491.275061,
+      "1": 452.116739,
+      "2": 478.596315
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 106.079725,
+      "0-2": 126.86156,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 15,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.10529,
+        "packet_loss": 0.009221,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.894125,
+        "packet_loss": 0.009614,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.318703,
+        "packet_loss": 0.011568,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 443.586469,
+      "1": 546.838321,
+      "2": 541.903731
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 16,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": false,
+        "delay": 24.771483,
+        "packet_loss": 0.049558,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 9.525179,
+        "packet_loss": 0.008364,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.423196,
+        "packet_loss": 0.011654,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.193207,
+        "packet_loss": 0.010888,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 470.724486,
+      "1": 479.942996,
+      "2": 493.788858
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 113.046927
+    }
+  },
+  {
+    "round": 17,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0,
+        2
+      ],
+      "2": [
+        0,
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": false,
+        "delay": 24.054017,
+        "packet_loss": 0.043531,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 23.20854,
+        "packet_loss": 0.05408,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 25.515804,
+        "packet_loss": 0.054256,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.131679,
+        "packet_loss": 0.011372,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.241066,
+        "packet_loss": 0.009669,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.954195,
+        "packet_loss": 0.00961,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 466.489409,
+      "1": 498.820989,
+      "2": 567.169508
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 132.074828,
+      "0-2": 130.551391,
+      "1-2": 129.31612
+    }
+  },
+  {
+    "round": 18,
+    "plane_neighbors": {
+      "0": [
+        1,
+        2
+      ],
+      "1": [
+        0
+      ],
+      "2": [
+        0
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": true,
+        "success": true,
+        "delay": 25.435405,
+        "packet_loss": 0.054162,
+        "contact_duration": 30
+      },
+      "0-2": {
+        "available": true,
+        "success": true,
+        "delay": 25.072425,
+        "packet_loss": 0.04195,
+        "contact_duration": 30
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.444282,
+        "packet_loss": 0.010213,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.010695,
+        "packet_loss": 0.009083,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.153485,
+        "packet_loss": 0.009978,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 432.031182,
+      "1": 462.978656,
+      "2": 455.013248
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 130.08787,
+      "0-2": 117.381921,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 19,
+    "plane_neighbors": {
+      "0": [],
+      "1": [],
+      "2": []
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.592068,
+        "packet_loss": 0.01161,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 9.469149,
+        "packet_loss": 0.00822,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 10.282679,
+        "packet_loss": 0.009622,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 560.715105,
+      "1": 429.087772,
+      "2": 534.452267
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 0.0
+    }
+  },
+  {
+    "round": 20,
+    "plane_neighbors": {
+      "0": [],
+      "1": [
+        2
+      ],
+      "2": [
+        1
+      ]
+    },
+    "inter_plane_links": {
+      "0-1": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "0-2": {
+        "available": false,
+        "success": false,
+        "delay": 0.0,
+        "packet_loss": 1.0,
+        "contact_duration": 0
+      },
+      "1-2": {
+        "available": true,
+        "success": true,
+        "delay": 27.102653,
+        "packet_loss": 0.041809,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_links": {
+      "0-0": {
+        "available": true,
+        "success": true,
+        "delay": 10.184598,
+        "packet_loss": 0.01163,
+        "contact_duration": 30
+      },
+      "1-1": {
+        "available": true,
+        "success": true,
+        "delay": 10.007716,
+        "packet_loss": 0.010592,
+        "contact_duration": 30
+      },
+      "2-2": {
+        "available": true,
+        "success": true,
+        "delay": 9.854839,
+        "packet_loss": 0.008739,
+        "contact_duration": 30
+      }
+    },
+    "intra_plane_bandwidth_mbps": {
+      "0": 550.340588,
+      "1": 534.88527,
+      "2": 498.118578
+    },
+    "inter_plane_bandwidth_mbps": {
+      "0-1": 0.0,
+      "0-2": 0.0,
+      "1-2": 134.929177
+    }
+  }
+]

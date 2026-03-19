@@ -11,8 +11,8 @@ from typing import Iterable
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from federated import FederatedConfig, run_federated_training
-from federated.partition import load_window_dataset
+from OrbitShield_FL import FederatedConfig, run_federated_training
+from OrbitShield_FL.partition import load_window_dataset
 from experiment_utils import write_csv, write_json
 
 
@@ -60,8 +60,8 @@ def summarize_result(
 def main() -> None:
     """Run a systematic parameter sweep for the full federated method."""
     parser = argparse.ArgumentParser(description="Grid search OrbitShield_FL federated parameters")
-    parser.add_argument("--data_dir", default="../dataset_window")
-    parser.add_argument("--output_dir", default="experiments_window/federated/full_grid")
+    parser.add_argument("--data_dir", default="../dataset_cicids17")
+    parser.add_argument("--output_dir", default="experiments/OrbitShield_FL/grid_search")
     parser.add_argument("--num_clients", type=int, default=12)
     parser.add_argument("--num_planes", type=int, default=3)
     parser.add_argument("--rounds", type=int, default=5)
@@ -77,7 +77,7 @@ def main() -> None:
     parser.add_argument("--warmup_rounds_list", default="1,2,3")
     parser.add_argument("--global_momentum_list", default="0.1,0.2,0.3")
     parser.add_argument("--device", default=None)
-    parser.add_argument("--init_checkpoint", default="checkpoints_gru/window_gru_best.pt")
+    parser.add_argument("--init_checkpoint", default="checkpoints_gru/cicids17_gru_best.pt")
     parser.add_argument("--hidden_dim", type=int, default=64)
     parser.add_argument("--bidirectional", action="store_true", default=False)
     parser.add_argument("--dropout", type=float, default=0.3)
@@ -160,7 +160,7 @@ def main() -> None:
 
         summary_rows.sort(key=lambda item: item["test_accuracy"], reverse=True)
         write_csv(
-            os.path.join(args.output_dir, "full_grid_summary.csv"),
+            os.path.join(args.output_dir, "grid_search_summary.csv"),
             summary_rows,
             [
                 "variant_name",
@@ -177,7 +177,7 @@ def main() -> None:
             ],
         )
         write_json(
-            os.path.join(args.output_dir, "full_grid_results.json"),
+            os.path.join(args.output_dir, "grid_search_results.json"),
             {
                 "best_variant_name": best_run_name,
                 "best_test_accuracy": best_score,

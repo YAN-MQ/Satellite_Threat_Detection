@@ -5,7 +5,7 @@ BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 NS3_DIR="$(cd "$BASE_DIR/../.." && pwd)"
 FRAG_DIR="$BASE_DIR/fragments_window"
 CAPTURE_DIR="$BASE_DIR/captured_window"
-DATASET_OUT="$BASE_DIR/dataset_window"
+DATASET_OUT="$BASE_DIR/dataset_cicids17"
 MAX_PACKETS="${MAX_PACKETS:-50000}"
 
 echo "=========================================="
@@ -59,7 +59,7 @@ echo "[5/5] Extracting features and training GRU"
 cd "$BASE_DIR"
 python3 2_extract_features_window.py
 cd 4_train
-python3 scripts/train_gru.py --data_dir ../dataset_window --epochs 20 --num_classes 3 --input_dim 18
+python3 scripts/train_gru.py --data_dir ../dataset_cicids17 --epochs 20 --num_classes 3 --input_dim 18
 
 echo "=========================================="
 echo "Pipeline Complete"

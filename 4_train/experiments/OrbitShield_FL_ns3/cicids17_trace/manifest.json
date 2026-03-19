@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generator": "federated_constellation.cc",
+  "config_file": "constellation_config.json",
+  "round_count": 20,
+  "round_files": [
+    "round_0001.json",
+    "round_0002.json",
+    "round_0003.json",
+    "round_0004.json",
+    "round_0005.json",
+    "round_0006.json",
+    "round_0007.json",
+    "round_0008.json",
+    "round_0009.json",
+    "round_0010.json",
+    "round_0011.json",
+    "round_0012.json",
+    "round_0013.json",
+    "round_0014.json",
+    "round_0015.json",
+    "round_0016.json",
+    "round_0017.json",
+    "round_0018.json",
+    "round_0019.json",
+    "round_0020.json"
+  ]
+}
