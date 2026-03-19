@@ -1,0 +1,161 @@
+{
+  "config": {
+    "data_dir": "../dataset_cicids17",
+    "output_dir": "experiments/OrbitShield_FL/grid_search/full_beta03_warm1_gm02",
+    "method": "full",
+    "num_clients": 12,
+    "num_planes": 3,
+    "rounds": 5,
+    "local_epochs": 1,
+    "batch_size": 512,
+    "input_dim": 18,
+    "num_classes": 3,
+    "hidden_dim": 64,
+    "bidirectional": false,
+    "dropout": 0.3,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "init_checkpoint": "checkpoints_gru/cicids17_gru_best.pt",
+    "partition_mode": "dirichlet",
+    "dirichlet_alpha": 0.3,
+    "beta": 0.3,
+    "beta_floor": 0.05,
+    "lambda_s": 0.1,
+    "rho": 0.5,
+    "mu": 0.8,
+    "global_momentum": 0.2,
+    "warmup_rounds": 1,
+    "r_min": 0.1,
+    "seed": 42,
+    "device": "cuda",
+    "intra_plane_success_prob": 0.98,
+    "inter_plane_success_prob": 0.75,
+    "inter_plane_contact_period": 4,
+    "inter_plane_contact_duration": 2,
+    "packet_loss_prob": 0.05,
+    "link_delay_mean": 25.0,
+    "stable_score_weights": [
+      0.4,
+      0.4,
+      0.2
+    ],
+    "class_names": [
+      "Benign",
+      "DDoS",
+      "PortScan"
+    ]
+  },
+  "device": "cuda",
+  "best_model_path": "experiments/OrbitShield_FL/grid_search/full_beta03_warm1_gm02/best_global_model.pt",
+  "final_round": {
+    "round": 5,
+    "val_loss": 0.075541,
+    "val_accuracy": 0.971928,
+    "val_precision": 0.972588,
+    "val_recall": 0.971928,
+    "val_f1": 0.971915,
+    "test_accuracy": 0.950686,
+    "test_precision": 0.95275,
+    "test_recall": 0.950686,
+    "test_f1": 0.950427,
+    "communication_cost_mb": 2.04216,
+    "stale_update_ratio": 0.0,
+    "link_failure_robustness": 1.0,
+    "confusion_matrix": "[[10868, 0, 218], [410, 9549, 773], [114, 103, 10775]]",
+    "plane_meta": {
+      "0": {
+        "client_weights": {
+          "sat_0": 0.13787299153367527,
+          "sat_1": 0.48925349156538195,
+          "sat_2": 0.2299623798393226,
+          "sat_3": 0.14291113706162023
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "1": {
+        "client_weights": {
+          "sat_4": 0.5913434387660044,
+          "sat_5": 0.0712424247420612,
+          "sat_6": 0.29923761401577426,
+          "sat_7": 0.03817652247616001
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "2": {
+        "client_weights": {
+          "sat_8": 0.43242984422817127,
+          "sat_9": 0.16704089192413593,
+          "sat_10": 0.16619106630326916,
+          "sat_11": 0.23433819754442375
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      }
+    },
+    "plane_gossip_meta": {
+      "0": {
+        "used_neighbors": [
+          1,
+          2
+        ],
+        "missing_neighbors": [],
+        "adaptive_beta": 0.25939482531186486,
+        "gamma": {
+          "1": 0.4981667578904061,
+          "2": 0.5018332421095939
+        }
+      },
+      "1": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [],
+        "adaptive_beta": 0.2586270824892793,
+        "gamma": {
+          "0": 1.0
+        }
+      },
+      "2": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [],
+        "adaptive_beta": 0.2601625681344504,
+        "gamma": {
+          "0": 1.0
+        }
+      }
+    }
+  },
+  "final_test_metrics": {
+    "loss": 0.12106695687668063,
+    "accuracy": 0.9506857665345931,
+    "precision": 0.9527504049663674,
+    "recall": 0.9506857665345931,
+    "f1": 0.9504274517848718,
+    "confusion_matrix": [
+      [
+        10868,
+        0,
+        218
+      ],
+      [
+        410,
+        9549,
+        773
+      ],
+      [
+        114,
+        103,
+        10775
+      ]
+    ],
+    "label_distribution": {
+      "0": 11086,
+      "1": 10732,
+      "2": 10992
+    }
+  }
+}

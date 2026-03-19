@@ -2,7 +2,10 @@
 
 ## 概述
 
-本文档是当前目录的最终说明，只对应清理后的窗口版实验链路。
+本文档是当前目录的最终说明，覆盖两个数据路径：
+
+- `cicids17`：基于 NS-3 实时仿真和窗口特征提取生成的 `dataset_cicids17`
+- `sti`：新增接入的卫星地面融合网络结构化数据集 `STI`
 
 本次流程严格按以下链路执行：
 
@@ -36,7 +39,8 @@
 - 时间窗提取与分片：`1_fragment_pcap_window.py`
 - 特征提取：`2_extract_features_window.py`
 - 实时仿真：`realtime_satellite.cc`、`CMakeLists.txt`、`run_all_window.sh`
-- 当前数据产物：`fragments_window/`、`captured_window/`、`dataset_window/`
+- 当前数据产物：`fragments_window/`、`captured_window/`、`dataset_cicids17/`
+- 新增结构化数据集：`STI_dataset/`、`dataset_sti/`
 - 当前训练与扩展实验：`4_train/`
 
 原始版、鲁棒版、历史 checkpoint、旧文档和过时脚本都已经移除。
@@ -185,9 +189,75 @@ python3 2_extract_features_window.py
 
 生成：
 
-- [dataset_window/train.npz](./dataset_window/train.npz)
-- [dataset_window/val.npz](./dataset_window/val.npz)
-- [dataset_window/test.npz](./dataset_window/test.npz)
+- [dataset_cicids17/train.npz](./dataset_cicids17/train.npz)
+- [dataset_cicids17/val.npz](./dataset_cicids17/val.npz)
+- [dataset_cicids17/test.npz](./dataset_cicids17/test.npz)
+
+## STI 数据集接入
+
+除了当前 `cicids17` 窗口版数据外，本项目还新增接入了 GitHub 数据集：
+
+- 仓库：<https://github.com/hjp007/STI>
+- 本地目录：[STI_dataset](./STI_dataset)
+
+### 1. 数据集特点
+
+`STI` 是结构化表格型数据集，不依赖当前的 PCAP -> NS-3 -> 窗口特征提取链路。  
+该数据集包含：
+
+- `20` 个已归一化特征
+- `8` 个类别标签：
+  - `Benign`
+  - `Signal Disruption`
+  - `UDP flood`
+  - `Jamming`
+  - `Bruteforce`
+  - `Infiltration`
+  - `DoS`
+  - `DDoS`
+
+当前仓库内的数据以按类别拆分的 `.rar` 形式提供，每个压缩包内对应一个 `CSV` 文件。
+
+### 2. STI 预处理脚本
+
+新增脚本：
+
+- [3_prepare_sti_dataset.py](./3_prepare_sti_dataset.py)
+
+该脚本会：
+
+1. 直接从 `STI_dataset/*.rar` 中读取 `CSV`
+2. 去掉首列无名索引
+3. 保留 `20` 个特征列
+4. 将 `Label` 编码成 `8` 类整数标签
+5. 按每个类别当前行顺序做 `60 / 20 / 20` 切分
+6. 导出为本项目兼容的 `npz` 格式
+
+生成目录：
+
+- [dataset_sti](./dataset_sti)
+
+其中包含：
+
+- [dataset_sti/train.npz](./dataset_sti/train.npz)
+- [dataset_sti/val.npz](./dataset_sti/val.npz)
+- [dataset_sti/test.npz](./dataset_sti/test.npz)
+- [dataset_sti/metadata.json](./dataset_sti/metadata.json)
+
+### 3. STI 数据输出格式
+
+为了复用现有 `DSC-CBAM-GRU` 训练入口，`STI` 当前导出为：
+
+- `X.shape = (samples, 1, 20)`
+- `y.shape = (samples,)`
+
+也就是说，每一条表格样本被组织成“序列长度为 1 的输入”，从而与现有模型训练代码兼容。
+
+当前全量规模为：
+
+- `Train: (1273390, 1, 20)`
+- `Val: (424461, 1, 20)`
+- `Test: (424471, 1, 20)`
 
 ## 特征与预处理
 
@@ -519,58 +589,75 @@ PY
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-./run_train_gpu.sh --epochs 20 --output checkpoints_gru/window_gru_gpu.pt
+./run_train.sh --epochs 20 --output checkpoints_gru/cicids17_gru.pt
 ```
 
 对应包装脚本见：
 
-- [4_train/run_train_gpu.sh](./4_train/run_train_gpu.sh)
-- [4_train/run_ablation_gpu.sh](./4_train/run_ablation_gpu.sh)
-- [4_train/run_comparison_gpu.sh](./4_train/run_comparison_gpu.sh)
-- [4_train/run_tune_full_gpu.sh](./4_train/run_tune_full_gpu.sh)
+- [4_train/run_train.sh](./4_train/run_train.sh)
+- [4_train/run_ablation.sh](./4_train/run_ablation.sh)
+- [4_train/run_comparison.sh](./4_train/run_comparison.sh)
+- [4_train/run_tune_full.sh](./4_train/run_tune_full.sh)
 
 例如：
 
 ```bash
-./run_ablation_gpu.sh --epochs 20
-./run_comparison_gpu.sh --epochs 20
-./run_tune_full_gpu.sh --epochs 20 --max_runs 4
+./run_ablation.sh --epochs 20
+./run_comparison.sh --epochs 20
+./run_tune_full.sh --epochs 20 --max_runs 4
 ```
 
 如果你想直接调 Python 脚本，也可以：
 
 ```bash
 /home/lithic/final/ns3-gpu-venv/bin/python scripts/train_gru.py \
-  --data_dir ../dataset_window \
+  --data_dir ../dataset_cicids17 \
   --device cuda \
   --epochs 20 \
-  --output checkpoints_gru/window_gru_gpu.pt
+  --output checkpoints_gru/cicids17_gru.pt
 ```
 
-### 本次 GPU 烟雾测试
+### 本次 GPU 快速验证
 
-已实际在 `cuda` 上跑通 1 个 epoch：
+已实际在 `cuda` 上跑通 1 个 epoch，用于确认训练链路和设备配置正确：
 
-- 输出模型：[4_train/checkpoints_gru/window_gru_gpu_smoke.pt](./4_train/checkpoints_gru/window_gru_gpu_smoke.pt)
 - 运行设备：`cuda`
 - `Val Acc = 0.9507`
 - `Test Accuracy = 0.9297`
 
 ### 6. 训练 DSC-CBAM-GRU
 
+当前单体训练入口 [4_train/scripts/train_gru.py](./4_train/scripts/train_gru.py) 已支持数据集切换：
+
+- `--dataset cicids17`
+- `--dataset sti`
+
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
 python3 scripts/train_gru.py \
-  --data_dir ../dataset_window \
+  --dataset cicids17 \
   --epochs 20 \
-  --num_classes 3 \
-  --input_dim 18 \
-  --output checkpoints_gru/window_gru_best.pt
+  --output checkpoints_gru/cicids17_gru_best.pt
 ```
 
 模型输出：
 
-- [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt)
+- [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt)
+
+如果训练 `STI`，可直接使用：
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+python3 scripts/train_gru.py \
+  --dataset sti \
+  --epochs 5 \
+  --output checkpoints_gru/sti_gru_best.pt
+```
+
+说明：
+
+- `cicids17` 会自动使用 `../dataset_cicids17`、`18` 维输入、`3` 类输出
+- `sti` 会自动使用 `../dataset_sti`、`20` 维输入、`8` 类输出
 
 ## 本次完整重跑结果
 
@@ -621,7 +708,7 @@ Epoch 05 | Train Loss: 0.0448 | Val Loss: 0.0471 | Val Acc: 0.9787
 Epoch 10 | Train Loss: 0.0287 | Val Loss: 0.0445 | Val Acc: 0.9827
 Epoch 15 | Train Loss: 0.0205 | Val Loss: 0.0543 | Val Acc: 0.9835
 Epoch 20 | Train Loss: 0.0163 | Val Loss: 0.0539 | Val Acc: 0.9832
-Best model saved to checkpoints_gru/window_gru_best.pt (Val Acc: 0.9902)
+Best model saved to checkpoints_gru/cicids17_gru_best.pt (Val Acc: 0.9902)
 ```
 
 测试集结果：
@@ -639,6 +726,27 @@ Best model saved to checkpoints_gru/window_gru_best.pt (Val Acc: 0.9902)
  [   76    22 10894]]
 ```
 
+## STI 单体训练结果
+
+在新增 `STI` 数据集后，当前也已经跑通了 `DSC-CBAM-GRU` 的单体训练。  
+你本机在全量 `STI` 数据上运行 `5` 个 epoch 的结果为：
+
+- `Best Val Acc = 0.9955`
+- `Test Accuracy = 0.9956`
+- `Test Precision = 0.9956`
+- `Test Recall = 0.9956`
+- `Test F1 = 0.9956`
+
+对应模型文件：
+
+- [4_train/checkpoints_gru/sti_gru_best.pt](./4_train/checkpoints_gru/sti_gru_best.pt)
+
+这说明：
+
+- `STI` 已经成功接入现有单体训练流程
+- 当前 `DSC-CBAM-GRU` 在 `STI` 上可以获得很高的分类性能
+- 数据集切换配置已经可以支持 `cicids17` 与 `sti` 共存
+
 ## 当前结论
 
 1. Friday afternoon 的真正 `DDoS` 包级窗口已经并入当前流程。
@@ -648,22 +756,22 @@ Best model saved to checkpoints_gru/window_gru_best.pt (Val Acc: 0.9902)
 
 ## 扩展实验脚本
 
-在不覆盖现有主实验结果的前提下，当前新增了 3 个独立脚本，输出默认写入 `4_train/experiments_window/`：
+在不覆盖现有主实验结果的前提下，当前新增了 3 个独立脚本，输出默认写入 `4_train/experiments/`：
 
-- [4_train/scripts/run_ablation_window.py](./4_train/scripts/run_ablation_window.py)
-  - 基于当前 `dataset_window` 运行 `full / no_dsc / no_cbam / no_gru` 消融实验
-- [4_train/scripts/run_comparison_window.py](./4_train/scripts/run_comparison_window.py)
+- [4_train/scripts/run_ablation.py](./4_train/scripts/run_ablation.py)
+  - 基于当前 `dataset_cicids17` 运行 `full / no_dsc / no_cbam / no_gru` 消融实验
+- [4_train/scripts/run_comparison.py](./4_train/scripts/run_comparison.py)
   - 运行 `DSC-CBAM-GRU / DSC-CBAM-LSTM / MLP / CNN-LSTM / RF / ID3` 对比实验
-- [4_train/scripts/plot_tsne_window.py](./4_train/scripts/plot_tsne_window.py)
-  - 读取当前 `window_gru_best.pt` 并生成新的 t-SNE 图
+- [4_train/scripts/plot_tsne.py](./4_train/scripts/plot_tsne.py)
+  - 读取当前 `cicids17_gru_best.pt` 并生成新的 t-SNE 图
 
 此外，当前还新增了 2 个模型压缩脚本：
 
-- [4_train/scripts/prune_window_model.py](./4_train/scripts/prune_window_model.py)
+- [4_train/scripts/prune_model.py](./4_train/scripts/prune_model.py)
   - 对当前 `DSC-CBAM-GRU` 做后训练全局非结构化剪枝
   - 默认剪枝 `Conv1D / DSC / CBAM 内线性层 / GRU / FC` 的权重
   - 输出剪枝后的 checkpoint 和精度、稀疏率、推理时延汇总
-- [4_train/scripts/quantize_window_model.py](./4_train/scripts/quantize_window_model.py)
+- [4_train/scripts/quantize_model.py](./4_train/scripts/quantize_model.py)
   - 对当前 `DSC-CBAM-GRU` 做后训练动态量化
   - 默认量化 `GRU` 和 `Linear` 为 `INT8`
   - 输出量化后的 checkpoint 和精度、文件大小、推理时延汇总
@@ -673,20 +781,20 @@ Best model saved to checkpoints_gru/window_gru_best.pt (Val Acc: 0.9902)
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
 
-python3 scripts/run_ablation_window.py --data_dir ../dataset_window --epochs 20
-python3 scripts/run_comparison_window.py --data_dir ../dataset_window --epochs 20
-python3 scripts/plot_tsne_window.py --data_dir ../dataset_window --model_path checkpoints_gru/window_gru_best.pt
-python3 scripts/prune_window_model.py --data_dir ../dataset_window --checkpoint checkpoints_gru/window_gru_best.pt --amount 0.30
-python3 scripts/quantize_window_model.py --data_dir ../dataset_window --checkpoint checkpoints_gru/window_gru_best.pt
+python3 scripts/run_ablation.py --data_dir ../dataset_cicids17 --epochs 20
+python3 scripts/run_comparison.py --data_dir ../dataset_cicids17 --epochs 20
+python3 scripts/plot_tsne.py --data_dir ../dataset_cicids17 --model_path checkpoints_gru/cicids17_gru_best.pt
+python3 scripts/prune_model.py --data_dir ../dataset_cicids17 --checkpoint checkpoints_gru/cicids17_gru_best.pt --amount 0.30
+python3 scripts/quantize_model.py --data_dir ../dataset_cicids17 --checkpoint checkpoints_gru/cicids17_gru_best.pt
 ```
 
 ## 模型压缩脚本
 
 ### 1. 剪枝脚本
 
-[4_train/scripts/prune_window_model.py](./4_train/scripts/prune_window_model.py) 使用 PyTorch 原生剪枝接口做后训练压缩，流程为：
+[4_train/scripts/prune_model.py](./4_train/scripts/prune_model.py) 使用 PyTorch 原生剪枝接口做后训练压缩，流程为：
 
-1. 加载当前 `window_gru_best.pt`
+1. 加载当前 `cicids17_gru_best.pt`
 2. 在测试集上评估基线模型
 3. 对卷积层、注意力层、GRU 和全连接层做全局 `L1` 非结构化剪枝
 4. 移除 pruning re-parameterization，导出普通 `state_dict`
@@ -699,23 +807,23 @@ python3 scripts/quantize_window_model.py --data_dir ../dataset_window --checkpoi
 
 默认输出目录：
 
-- `4_train/experiments_window/compression/pruning/`
+- `4_train/experiments/compression/pruning/`
 
 示例：
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-python3 scripts/prune_window_model.py \
-  --data_dir ../dataset_window \
-  --checkpoint checkpoints_gru/window_gru_best.pt \
+python3 scripts/prune_model.py \
+  --data_dir ../dataset_cicids17 \
+  --checkpoint checkpoints_gru/cicids17_gru_best.pt \
   --amount 0.30
 ```
 
 ### 2. 量化脚本
 
-[4_train/scripts/quantize_window_model.py](./4_train/scripts/quantize_window_model.py) 使用 PyTorch 动态量化接口，流程为：
+[4_train/scripts/quantize_model.py](./4_train/scripts/quantize_model.py) 使用 PyTorch 动态量化接口，流程为：
 
-1. 加载当前 `window_gru_best.pt`
+1. 加载当前 `cicids17_gru_best.pt`
 2. 在 CPU 上评估基线模型
 3. 对 `GRU` 和 `Linear` 做动态 `INT8` 量化
 4. 导出量化模型 `state_dict`
@@ -727,25 +835,25 @@ python3 scripts/prune_window_model.py \
 
 默认输出目录：
 
-- `4_train/experiments_window/compression/quantization/`
+- `4_train/experiments/compression/quantization/`
 
 示例：
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-python3 scripts/quantize_window_model.py \
-  --data_dir ../dataset_window \
-  --checkpoint checkpoints_gru/window_gru_best.pt
+python3 scripts/quantize_model.py \
+  --data_dir ../dataset_cicids17 \
+  --checkpoint checkpoints_gru/cicids17_gru_best.pt
 ```
 
 ### 3. 当前压缩实验结果
 
-本次已经基于当前主模型 [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt) 实际跑通：
+本次已经基于当前主模型 [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt) 实际跑通：
 
-- [4_train/experiments_window/compression/pruning/window_gru_pruned_30.pt](./4_train/experiments_window/compression/pruning/window_gru_pruned_30.pt)
-- [4_train/experiments_window/compression/pruning/window_gru_pruned_30_summary.json](./4_train/experiments_window/compression/pruning/window_gru_pruned_30_summary.json)
-- [4_train/experiments_window/compression/quantization/window_gru_dynamic_int8.pt](./4_train/experiments_window/compression/quantization/window_gru_dynamic_int8.pt)
-- [4_train/experiments_window/compression/quantization/window_gru_dynamic_int8_summary.json](./4_train/experiments_window/compression/quantization/window_gru_dynamic_int8_summary.json)
+- [4_train/experiments/compression/pruning/cicids17_gru_pruned_30.pt](./4_train/experiments/compression/pruning/cicids17_gru_pruned_30.pt)
+- [4_train/experiments/compression/pruning/cicids17_gru_pruned_30_summary.json](./4_train/experiments/compression/pruning/cicids17_gru_pruned_30_summary.json)
+- [4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8.pt](./4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8.pt)
+- [4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8_summary.json](./4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8_summary.json)
 
 结果如下：
 
@@ -774,9 +882,9 @@ python3 scripts/quantize_window_model.py \
 
 本次已实际运行：
 
-- [4_train/experiments_window/ablation/ablation_summary.csv](./4_train/experiments_window/ablation/ablation_summary.csv)
-- [4_train/experiments_window/comparison/comparison_summary.csv](./4_train/experiments_window/comparison/comparison_summary.csv)
-- [4_train/experiments_window/visualization/tsne_window_gru.png](./4_train/experiments_window/visualization/tsne_window_gru.png)
+- [4_train/experiments/ablation/ablation_summary.csv](./4_train/experiments/ablation/ablation_summary.csv)
+- [4_train/experiments/comparison/comparison_summary.csv](./4_train/experiments/comparison/comparison_summary.csv)
+- [4_train/experiments/visualization/tsne_cicids17_gru.png](./4_train/experiments/visualization/tsne_cicids17_gru.png)
 
 ### 消融实验
 
@@ -827,22 +935,27 @@ python3 scripts/quantize_window_model.py \
 
 正式 t-SNE 图已生成：
 
-- [4_train/experiments_window/visualization/tsne_window_gru.png](./4_train/experiments_window/visualization/tsne_window_gru.png)
-- [4_train/experiments_window/visualization/tsne_window_gru.npz](./4_train/experiments_window/visualization/tsne_window_gru.npz)
+- [4_train/experiments/visualization/tsne_cicids17_gru.png](./4_train/experiments/visualization/tsne_cicids17_gru.png)
+- [4_train/experiments/visualization/tsne_cicids17_gru.npz](./4_train/experiments/visualization/tsne_cicids17_gru.npz)
 
 其中 `.png` 是可直接查看的二维聚类图，`.npz` 保存了对应的二维嵌入点、标签和采样索引，后续可用于复绘或写论文图注。
 
 ## 联邦学习子系统
 
-在不破坏现有单机训练闭环的前提下，当前已经新增了一个“面向低轨卫星多星协同威胁预测”的联邦学习版本。联邦代码全部放在 `4_train/federated/` 下，单机脚本、特征提取脚本和原始 `DSC-CBAM-GRU` 模型均保持不变。
+在不破坏现有单机训练闭环的前提下，当前已经新增了一个“面向低轨卫星多星协同威胁预测”的联邦学习版本。联邦代码全部放在 `4_train/OrbitShield_FL/` 下，单机脚本、特征提取脚本和原始 `DSC-CBAM-GRU` 模型均保持不变。
+
+当前联邦入口已支持两个数据集：
+
+- `cicids17`
+- `sti`
 
 ### 1. 设计目标
 
 联邦版本遵循以下原则：
 
-- 直接复用当前 [dataset_window](./dataset_window) 中已经生成好的 `train.npz / val.npz / test.npz`
+- 直接复用当前 [dataset_cicids17](./dataset_cicids17) 或 [dataset_sti](./dataset_sti) 中已经生成好的 `train.npz / val.npz / test.npz`
 - 直接复用当前 [4_train/src/models/dsc_cbam_gru.py](./4_train/src/models/dsc_cbam_gru.py)
-- 不重新定义 18 维特征，不改变三分类标签
+- 不重新定义已有特征，只通过数据集配置切换输入维度和类别数
 - 第一版只做“算法仿真级联邦”，不要求真实多机通信
 - 将 12 颗卫星模拟为 12 个联邦客户端，分成 3 个轨道面，每面 4 星
 
@@ -856,28 +969,28 @@ python3 scripts/quantize_window_model.py \
 
 新增联邦模块如下：
 
-- [4_train/federated/__init__.py](./4_train/federated/__init__.py)
-- [4_train/federated/config.py](./4_train/federated/config.py)
-- [4_train/federated/client.py](./4_train/federated/client.py)
-- [4_train/federated/serverless_orchestrator.py](./4_train/federated/serverless_orchestrator.py)
-- [4_train/federated/topology.py](./4_train/federated/topology.py)
-- [4_train/federated/contact_plan.py](./4_train/federated/contact_plan.py)
-- [4_train/federated/aggregators.py](./4_train/federated/aggregators.py)
-- [4_train/federated/gossip.py](./4_train/federated/gossip.py)
-- [4_train/federated/compensation.py](./4_train/federated/compensation.py)
-- [4_train/federated/reputation.py](./4_train/federated/reputation.py)
-- [4_train/federated/partition.py](./4_train/federated/partition.py)
-- [4_train/federated/metrics_fl.py](./4_train/federated/metrics_fl.py)
+- [4_train/OrbitShield_FL/__init__.py](./4_train/OrbitShield_FL/__init__.py)
+- [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py)
+- [4_train/OrbitShield_FL/client.py](./4_train/OrbitShield_FL/client.py)
+- [4_train/OrbitShield_FL/serverless_orchestrator.py](./4_train/OrbitShield_FL/serverless_orchestrator.py)
+- [4_train/OrbitShield_FL/topology.py](./4_train/OrbitShield_FL/topology.py)
+- [4_train/OrbitShield_FL/contact_plan.py](./4_train/OrbitShield_FL/contact_plan.py)
+- [4_train/OrbitShield_FL/aggregators.py](./4_train/OrbitShield_FL/aggregators.py)
+- [4_train/OrbitShield_FL/gossip.py](./4_train/OrbitShield_FL/gossip.py)
+- [4_train/OrbitShield_FL/compensation.py](./4_train/OrbitShield_FL/compensation.py)
+- [4_train/OrbitShield_FL/reputation.py](./4_train/OrbitShield_FL/reputation.py)
+- [4_train/OrbitShield_FL/partition.py](./4_train/OrbitShield_FL/partition.py)
+- [4_train/OrbitShield_FL/metrics_fl.py](./4_train/OrbitShield_FL/metrics_fl.py)
 
 新增脚本如下：
 
-- [4_train/scripts/train_federated_window.py](./4_train/scripts/train_federated_window.py)
-- [4_train/scripts/run_federated_demo.sh](./4_train/scripts/run_federated_demo.sh)
+- [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
+- [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh)
 - [4_train/scripts/run_federated_ablation.sh](./4_train/scripts/run_federated_ablation.sh)
 
 ### 3. 核心机制
 
-联邦训练主控不是传统中心服务器，而是 [4_train/federated/serverless_orchestrator.py](./4_train/federated/serverless_orchestrator.py) 中的 `ServerlessOrchestrator`。每轮训练按如下顺序执行：
+联邦训练主控不是传统中心服务器，而是 [4_train/OrbitShield_FL/serverless_orchestrator.py](./4_train/OrbitShield_FL/serverless_orchestrator.py) 中的 `ServerlessOrchestrator`。每轮训练按如下顺序执行：
 
 1. 生成当前离散时隙拓扑
 2. 按 `dirichlet / iid / quantity_skew / hybrid` 划分方式为每颗卫星分配本地训练子集
@@ -912,6 +1025,25 @@ python3 scripts/quantize_window_model.py \
 - 默认划分方式为 `Dirichlet non-IID`
 - 默认 `alpha = 0.3`
 
+当前数据集切换配置为：
+
+- `cicids17`
+  - `data_dir = ../dataset_cicids17`
+  - `input_dim = 18`
+  - `num_classes = 3`
+  - `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
+- `sti`
+  - `data_dir = ../dataset_sti`
+  - `input_dim = 20`
+  - `num_classes = 8`
+  - `init_checkpoint = checkpoints_gru/sti_gru_best.pt`
+
+另外，联邦训练入口还新增了：
+
+- `--max_samples`
+
+该参数默认不启用，仅在大数据集快速实验时用于对子数据集做受控采样。
+
 这样做的目的是：
 
 - 与现有单机训练数据保持完全兼容
@@ -922,37 +1054,34 @@ python3 scripts/quantize_window_model.py \
 
 联邦主脚本是：
 
-- [4_train/scripts/train_federated_window.py](./4_train/scripts/train_federated_window.py)
+- [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
 
 支持的关键参数包括：
 
-- `--data_dir`
-- `--num_clients`
-- `--num_planes`
+- `--dataset`
 - `--rounds`
 - `--local_epochs`
 - `--batch_size`
-- `--partition_mode`
-- `--dirichlet_alpha`
-- `--beta`
-- `--lambda_s`
-- `--rho`
-- `--mu`
+- `--num_clients`
+- `--num_planes`
 - `--device`
 - `--output_dir`
 - `--method`
-- `--init_checkpoint`
+- `--full_eval`
+- `--from_scratch`
+
+其余联邦超参数已经收敛到脚本内部默认值。只有做研究调参时，才需要显式传入高级参数。
 
 ### 6. 运行方法
 
-#### 最小 demo
+#### 默认运行
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-./scripts/run_federated_demo.sh
+./scripts/run_federated.sh
 ```
 
-当前联邦最终命名已经固化为 `OrbitShield_FL`，并且 `run_federated_demo.sh` 已经默认指向这一版本。
+当前联邦最终命名已经固化为 `OrbitShield_FL`，并且 `run_federated.sh` 已经默认指向这一版本。
 
 当前 `OrbitShield_FL` 默认配置为：
 
@@ -961,28 +1090,28 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - `warmup_rounds = 2`
 - `global_momentum = 0.1`
 - `beta_floor = 0.05`
-- `init_checkpoint = checkpoints_gru/window_gru_best.pt`
+- `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
+- `dataset = cicids17`
+
+这些参数已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的正式 preset 中。  
+也就是说，只要运行 `--method full`，默认就是当前最优的 `OrbitShield_FL` 配置，不需要再手动传 `beta / warmup_rounds / global_momentum`。
 
 #### 手动运行完整方案
 
 ```bash
-/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_window.py \
-  --data_dir ../dataset_window \
-  --num_clients 12 \
-  --num_planes 3 \
-  --rounds 20 \
-  --local_epochs 1 \
-  --batch_size 512 \
-  --partition_mode dirichlet \
-  --dirichlet_alpha 0.3 \
-  --beta 0.3 \
-  --lambda_s 0.1 \
-  --rho 0.5 \
-  --mu 0.8 \
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
+  --dataset cicids17 \
   --method full \
-  --init_checkpoint checkpoints_gru/window_gru_best.pt \
-  --device cuda \
-  --output_dir experiments_window/federated/OrbitShield_FL
+  --device cuda
+```
+
+#### 在 STI 上运行联邦完整方案
+
+```bash
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
+  --dataset sti \
+  --method full \
+  --device cuda
 ```
 
 #### 运行联邦方法对比
@@ -994,9 +1123,14 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 
 ### 7. 输出文件
 
-每次联邦实验默认输出到：
+每次联邦实验的正式输出目录为：
 
-- `4_train/experiments_window/federated/<method>/`
+- `4_train/experiments/OrbitShield_FL/cicids17`
+- `4_train/experiments/OrbitShield_FL/sti`
+
+如果运行基线对比脚本 [run_federated_ablation.sh](./4_train/scripts/run_federated_ablation.sh)，则输出到：
+
+- `4_train/experiments/OrbitShield_FL/baselines/<method>/`
 
 其中主要文件包括：
 
@@ -1011,24 +1145,47 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 
 为了提升联邦训练的收敛效果，当前已经加入了一个关键优化：
 
-- 默认使用现有单机最优模型 [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt) 作为联邦 warm start 初始化
+- 默认使用现有单机最优模型 [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt) 作为联邦 warm start 初始化
 
 这一步对效果提升非常明显：
 
-- 未 warm start 的 1 轮 smoke test，测试准确率约为 `0.3654`
-- 使用 warm start 后，同样 1 轮 smoke test，测试准确率提升到 `0.9002`
+- 未 warm start 的 1 轮快速验证，测试准确率约为 `0.3654`
+- 使用 warm start 后，同样 1 轮快速验证，测试准确率提升到 `0.9002`
 
-这组 smoke test 结果仅作为早期收敛对比记录，相关中间目录已在清理阶段删除；当前保留的正式联邦实验目录仅包括：
+这组快速验证结果仅作为早期收敛对比记录，相关中间目录已在清理阶段删除；当前保留的正式联邦实验目录仅包括：
 
-- [4_train/experiments_window/federated/OrbitShield_FL](./4_train/experiments_window/federated/OrbitShield_FL)
-- [4_train/experiments_window/federated/full_grid](./4_train/experiments_window/federated/full_grid)
+- [4_train/experiments/OrbitShield_FL/cicids17](./4_train/experiments/OrbitShield_FL/cicids17)
+- [4_train/experiments/OrbitShield_FL/grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
+
+对于 `STI`，当前已经完成完整联邦训练。为了把超大规模结构化数据集上的运行时间控制在可接受范围，联邦训练器新增了两项 `STI` 专用默认优化：
+
+- 每轮验证使用 `50,000` 条固定抽样验证集
+- 测试集仅在训练结束后执行一次完整评估
+
+同时，`STI` 默认还启用了：
+
+- `max_local_batches = 128`
+
+即每颗卫星每轮只执行固定 batch 预算的本地更新。这种做法更贴近联邦 SGD 的实际工程用法，也避免了 12 个客户端在每轮都完整扫过 127 万训练样本。
+
+`STI` 联邦正式结果目录为：
+
+- [OrbitShield_FL_sti](./4_train/experiments/OrbitShield_FL/sti)
+
+当前完整 `OrbitShield_FL` 在 `STI` 上的结果为：
+
+- `Best Val Acc = 0.9956`
+- `Test Accuracy = 0.9955`
+- `Test Precision = 0.9955`
+- `Test Recall = 0.9955`
+- `Test F1 = 0.9955`
 
 ### 9. 当前联邦方法对比结果
 
 本次已经基于相同数据、相同本地模型、相同 `5 rounds` 和 `warm start` 实际完成联邦方法对比。出于目录清理与最终交付需要，当前仅保留最终正式版本和完整网格搜索结果：
 
-- [OrbitShield_FL](./4_train/experiments_window/federated/OrbitShield_FL)
-- [full_grid](./4_train/experiments_window/federated/full_grid)
+- [OrbitShield_FL](./4_train/experiments/OrbitShield_FL/cicids17)
+- [grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
 
 结果如下：
 
@@ -1062,7 +1219,7 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - `warmup_rounds = 2`
 - `global_momentum = 0.1`
 - `beta_floor = 0.05`
-- `init_checkpoint = checkpoints_gru/window_gru_best.pt`
+- `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
 
 如果目标是继续研究“更贴近低轨星间协同”的进一步提升空间，则优先继续优化：
 
@@ -1083,10 +1240,10 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
   - `global_momentum in {0.1, 0.2, 0.3}`
 - 总计：`27` 组
 - 输出目录：
-  - [4_train/experiments_window/federated/full_grid](./4_train/experiments_window/federated/full_grid)
+  - [4_train/experiments/OrbitShield_FL/grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
 - 总表：
-  - [full_grid_summary.csv](./4_train/experiments_window/federated/full_grid/full_grid_summary.csv)
-  - [full_grid_results.json](./4_train/experiments_window/federated/full_grid/full_grid_results.json)
+  - [grid_search_summary.csv](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_summary.csv)
+  - [grid_search_results.json](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_results.json)
 - 搜索脚本：
   - [4_train/scripts/tune_federated_full.py](./4_train/scripts/tune_federated_full.py)
 
@@ -1107,7 +1264,7 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - `warmup_rounds = 2`
 - `global_momentum = 0.1`
 - `beta_floor = 0.05`
-- `init_checkpoint = checkpoints_gru/window_gru_best.pt`
+- `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
 
 在这组参数下，`OrbitShield_FL` 的测试集结果达到：
 
@@ -1135,23 +1292,216 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 5. 这说明在低轨卫星多星协同场景下，跨面协同不是简单“加 gossip 就更好”，而是必须在“何时交换、交换多少、如何抑制陈旧和不可靠更新”这三个方面进行联合设计。
 6. 从误差传播角度看，较小的 `beta=0.1`、适中的 `warmup_rounds=2` 和较低的 `global_momentum=0.1` 组合，能够在保留跨面信息增益的同时，避免邻面更新过度主导本地已收敛的判别特征。
 
-### 13. full_grid 可视化
+### 13. grid_search 可视化
 
-当前已经基于 [full_grid_summary.csv](./4_train/experiments_window/federated/full_grid/full_grid_summary.csv) 生成了 3 张调参图：
+当前已经基于 [grid_search_summary.csv](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_summary.csv) 生成了 3 张调参图：
 
-- [OrbitShield_FL_heatmaps.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_heatmaps.png)
-- [OrbitShield_FL_trends.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_trends.png)
-- [OrbitShield_FL_top10.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_top10.png)
+- [OrbitShield_FL_heatmaps.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_heatmaps.png)
+- [OrbitShield_FL_trends.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_trends.png)
+- [OrbitShield_FL_top10.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_top10.png)
 
 对应绘图脚本为：
 
-- [4_train/scripts/plot_federated_full_grid.py](./4_train/scripts/plot_federated_full_grid.py)
+- [4_train/scripts/plot_federated_grid_search.py](./4_train/scripts/plot_federated_grid_search.py)
 
 可直接重绘：
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_federated_full_grid.py \
-  --csv_path experiments_window/federated/full_grid/full_grid_summary.csv \
-  --output_dir experiments_window/federated/full_grid/plots
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_federated_grid_search.py \
+  --csv_path experiments/OrbitShield_FL/grid_search/grid_search_summary.csv \
+  --output_dir experiments/OrbitShield_FL/grid_search/plots
 ```
+
+## 九、ns-3 驱动的联邦协同仿真
+
+前面的 `OrbitShield_FL` 默认实验采用的是联邦框架内部的启发式动态拓扑，用于快速验证“面内聚合 + 面间 gossip + 信誉/补偿机制”的有效性。为了进一步提高低轨卫星场景的可信度，当前工程又新增了一条独立的 `ns-3` 驱动联邦协同仿真链路。
+
+这条链路与数据集生成链路严格分开：
+
+- [realtime_satellite.cc](./realtime_satellite.cc) 继续只负责 `PCAP -> 仿真链路 -> 抓包` 的数据生成
+- 新增 [federated_constellation.cc](./federated_constellation.cc) 专门负责“低轨星座通信环境 -> 联邦训练拓扑轨迹”
+
+因此，项目现在有两条相互独立的仿真路径：
+
+1. 数据仿真路径  
+   `原始 PCAP -> realtime_satellite.cc -> captured -> 特征提取 -> dataset_cicids17 / dataset_sti`
+2. 联邦协同路径  
+   `federated_constellation.cc -> ns-3 round trace -> OrbitShield_FL(ns3 backend)`
+
+### 1. 设计目标
+
+这条新链路不是把 PyTorch 训练塞进 `ns-3` 事件循环，而是采用“通信环境由 ns-3 给出、联邦训练由 Python 执行”的协同仿真方式。这样做的原因是：
+
+- 保留现有联邦训练框架和模型实现
+- 让 `ns-3` 只负责它最擅长的链路与拓扑仿真
+- 让联邦训练真正受 `带宽 / 时延 / 丢包 / 接触窗口` 约束
+- 避免把系统做成难以维护的实时混合大循环
+
+### 2. 新增模块
+
+新增的核心模块如下：
+
+- [federated_constellation.cc](./federated_constellation.cc)  
+  独立的 ns-3 星座通信环境仿真器，用于导出每轮联邦训练所需的通信状态
+- [4_train/OrbitShield_FL/ns3_bridge.py](./4_train/OrbitShield_FL/ns3_bridge.py)  
+  Python 桥接层，负责调用 ns-3 二进制、加载 trace、校验 manifest 和各轮 json
+- [4_train/OrbitShield_FL/topology_ns3.py](./4_train/OrbitShield_FL/topology_ns3.py)  
+  将 ns-3 trace 转成联邦主控可直接使用的拓扑快照
+- [4_train/OrbitShield_FL/transfer_scheduler.py](./4_train/OrbitShield_FL/transfer_scheduler.py)  
+  根据模型大小、链路带宽、丢包率和接触窗口，判断模型是否能在本轮传输完成
+- [4_train/scripts/train_federated_ns3.py](./4_train/scripts/train_federated_ns3.py)  
+  新的 ns-3 驱动联邦训练入口，不影响原有 [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
+
+### 3. ns-3 trace 输出内容
+
+[federated_constellation.cc](./federated_constellation.cc) 当前会导出：
+
+- `constellation_config.json`
+- `manifest.json`
+- `round_0001.json ... round_xxxx.json`
+
+每轮 trace 至少包含：
+
+- 轨道面与卫星映射
+- 面内链路状态
+- 面间链路状态
+- 每条链路的：
+  - `available`
+  - `success`
+  - `delay_ms`
+  - `bandwidth_mbps`
+  - `packet_loss`
+  - `contact_duration_s`
+
+这些字段会直接进入联邦训练，用于：
+
+- 决定哪些轨道面本轮可 gossip
+- 估算链路质量与通信可靠性
+- 判断客户端上传和面间模型交换是否能在窗口内完成
+
+### 4. 联邦主控如何使用 ns-3 拓扑
+
+当前联邦主控 [4_train/OrbitShield_FL/serverless_orchestrator.py](./4_train/OrbitShield_FL/serverless_orchestrator.py) 已支持两种 backend：
+
+- `heuristic`
+- `ns3`
+
+其中：
+
+- `heuristic` 继续复用原有启发式动态拓扑
+- `ns3` 则直接读取 ns-3 导出的 round trace
+
+在 `ns3` backend 下，本轮联邦训练会额外受到两个真实通信约束：
+
+1. 当前链路是否可见、是否成功
+2. 当前模型是否能在接触窗口内传完
+
+第二点由 [4_train/OrbitShield_FL/transfer_scheduler.py](./4_train/OrbitShield_FL/transfer_scheduler.py) 负责，它会根据：
+
+- 模型参数大小
+- `bandwidth_mbps`
+- `packet_loss`
+- `contact_duration_s`
+
+计算有效吞吐与传输时间，并决定本轮：
+
+- 是否允许客户端模型上传
+- 是否允许面间 gossip 生效
+- 若失败则转入已有补偿逻辑
+
+### 5. 运行方式
+
+#### 直接使用已有 ns-3 trace 训练
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_ns3.py \
+  --dataset cicids17 \
+  --trace_dir experiments/OrbitShield_FL_ns3/cicids17_trace \
+  --output_dir experiments/OrbitShield_FL_ns3/cicids17 \
+  --device cuda
+```
+
+这里如果额外指定 `--method full`，仍然会自动复用 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 中固化的正式最优 preset。
+
+#### 训练前自动生成新的 ns-3 trace
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_ns3.py \
+  --dataset cicids17 \
+  --rounds 5 \
+  --generate_trace \
+  --trace_output_dir experiments/OrbitShield_FL_ns3/cicids17_trace \
+  --output_dir experiments/OrbitShield_FL_ns3/cicids17 \
+  --device cuda
+```
+
+同样，`--method full` 不需要再手动补充 `beta / warmup_rounds / global_momentum`，默认就是 `OrbitShield_FL` 的正式最优配置。
+
+### 6. 当前已跑通的 ns-3 联调结果
+
+当前已经完成一组从“ns-3 trace 生成 -> ns-3 backend 联邦训练 -> 结果落盘”的完整联调实验：
+
+- trace 目录：
+  - [OrbitShield_FL_ns3_trace](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace)
+- 联邦训练输出目录：
+  - [OrbitShield_FL_ns3](./4_train/experiments/OrbitShield_FL_ns3/cicids17)
+
+主要输出文件包括：
+
+- [4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/constellation_config.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/constellation_config.json)
+- [4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/manifest.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/manifest.json)
+- [4_train/experiments/OrbitShield_FL_ns3/cicids17/summary.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17/summary.json)
+- [4_train/experiments/OrbitShield_FL_ns3/cicids17/round_metrics.csv](./4_train/experiments/OrbitShield_FL_ns3/cicids17/round_metrics.csv)
+- [4_train/experiments/OrbitShield_FL_ns3/cicids17/best_global_model.pt](./4_train/experiments/OrbitShield_FL_ns3/cicids17/best_global_model.pt)
+
+本次联调条件：
+
+- 数据集：`cicids17`
+- 轮数：`5`
+- backend：`ns3`
+- trace：由 [federated_constellation.cc](./federated_constellation.cc) 自动生成
+- 设备：`cuda`
+
+本次结果为：
+
+- `Best Val Accuracy = 0.9715`
+- `Test Accuracy = 0.9473`
+- `Test Precision = 0.9524`
+- `Test Recall = 0.9473`
+- `Test F1 = 0.9479`
+
+混淆矩阵：
+
+```text
+[[6126,    0,  571],
+ [  19, 6149,  380],
+ [  13,   71, 6671]]
+```
+
+这组结果的意义不在于当前数值一定优于默认启发式 `OrbitShield_FL`，而在于它已经证明：
+
+- 新的 ns-3 星座联邦环境仿真器可运行
+- trace 到联邦拓扑的桥接是闭环可用的
+- `OrbitShield_FL` 现在不仅能在启发式动态拓扑上训练，也能在 ns-3 驱动的通信环境上训练
+
+### 7. 当前结论
+
+从工程角度看，项目现在已经同时具备：
+
+- 数据生成级 ns-3 仿真链路
+- 联邦通信环境级 ns-3 协同仿真链路
+
+其中：
+
+- 前者服务于 `dataset_cicids17 / dataset_sti`
+- 后者服务于 `OrbitShield_FL` 的低轨多星协同通信环境模拟
+
+这为后续继续提高低轨卫星场景可信度提供了稳定基础。下一步如果需要继续增强，可以优先往以下方向扩展：
+
+1. 更真实的轨道面接触图
+2. 更细的链路容量/时延时变模型
+3. 星地链路和地面站回传
+4. 用 ns-3 实测链路统计替代更多启发式 link quality 项

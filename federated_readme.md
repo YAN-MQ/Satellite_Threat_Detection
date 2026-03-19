@@ -7,13 +7,13 @@
 
 当前保留的联邦实验目录只有：
 
-- [4_train/experiments_window/federated/OrbitShield_FL](./4_train/experiments_window/federated/OrbitShield_FL)
-- [4_train/experiments_window/federated/full_grid](./4_train/experiments_window/federated/full_grid)
+- [4_train/experiments/OrbitShield_FL/cicids17](./4_train/experiments/OrbitShield_FL/cicids17)
+- [4_train/experiments/OrbitShield_FL/grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
 
 其中：
 
 - `OrbitShield_FL` 是当前最终正式联邦版本
-- `full_grid` 是把完整联邦方案调到最优时保留的网格搜索档案
+- `grid_search` 是把完整联邦方案调到最优时保留的网格搜索档案
 
 ## 2. 与原项目的关系
 
@@ -25,18 +25,18 @@
 
 联邦版本只在训练层上新增一层抽象：
 
-`dataset_window -> 联邦划分 -> 多星协同训练 -> 全局评估`
+`dataset_cicids17 -> 联邦划分 -> 多星协同训练 -> 全局评估`
 
 直接复用的内容包括：
 
 - 数据集：
-  - [dataset_window/train.npz](./dataset_window/train.npz)
-  - [dataset_window/val.npz](./dataset_window/val.npz)
-  - [dataset_window/test.npz](./dataset_window/test.npz)
+  - [dataset_cicids17/train.npz](./dataset_cicids17/train.npz)
+  - [dataset_cicids17/val.npz](./dataset_cicids17/val.npz)
+  - [dataset_cicids17/test.npz](./dataset_cicids17/test.npz)
 - 模型：
   - [4_train/src/models/dsc_cbam_gru.py](./4_train/src/models/dsc_cbam_gru.py)
 - 单机最佳初始化模型：
-  - [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt)
+  - [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt)
 
 保持不变的约束包括：
 
@@ -73,7 +73,7 @@
 
 `OrbitShield_FL` 的核心思路可以概括为：
 
-1. 复用已有 `dataset_window`
+1. 复用已有 `dataset_cicids17`
 2. 把训练集切分给多颗卫星
 3. 每颗卫星本地训练同一个 `DSC-CBAM-GRU`
 4. 先在轨道面内做加权聚合
@@ -96,7 +96,7 @@
 
 ## 5. 星座抽象方式
 
-当前最小可运行 demo 采用 12 颗卫星、3 个轨道面：
+当前默认联邦配置采用 12 颗卫星、3 个轨道面：
 
 - `plane_0`: `sat_0, sat_1, sat_2, sat_3`
 - `plane_1`: `sat_4, sat_5, sat_6, sat_7`
@@ -111,9 +111,9 @@
 
 ## 6. 数据复用与联邦划分
 
-联邦学习第一版不重新提特征，直接复用现有 `dataset_window`。
+联邦学习第一版不重新提特征，直接复用现有 `dataset_cicids17`。
 
-训练集的联邦划分逻辑由 [4_train/federated/partition.py](./4_train/federated/partition.py) 负责，核心函数包括：
+训练集的联邦划分逻辑由 [4_train/OrbitShield_FL/partition.py](./4_train/OrbitShield_FL/partition.py) 负责，核心函数包括：
 
 - `load_window_dataset(...)`
 - `partition_train_dataset_for_satellites(...)`
@@ -189,7 +189,7 @@
 
 `w_i^{t,e+1} = w_i^{t,e} - eta * grad F_i(w_i^{t,e})`
 
-对应代码在 [4_train/federated/client.py](./4_train/federated/client.py) 中的：
+对应代码在 [4_train/OrbitShield_FL/client.py](./4_train/OrbitShield_FL/client.py) 中的：
 
 - `FederatedClient.local_train(...)`
 
@@ -203,7 +203,7 @@
 
 ### 8.3 面内聚合
 
-轨道面内聚合由 [4_train/federated/aggregators.py](./4_train/federated/aggregators.py) 中的 `intra_plane_aggregate(...)` 实现。
+轨道面内聚合由 [4_train/OrbitShield_FL/aggregators.py](./4_train/OrbitShield_FL/aggregators.py) 中的 `intra_plane_aggregate(...)` 实现。
 
 对于 `full` 方法，聚合权重按下式计算：
 
@@ -231,7 +231,7 @@
 
 ### 8.4 面间异步 gossip
 
-轨道面间协同由 [4_train/federated/gossip.py](./4_train/federated/gossip.py) 中的 `inter_plane_gossip(...)` 实现。
+轨道面间协同由 [4_train/OrbitShield_FL/gossip.py](./4_train/OrbitShield_FL/gossip.py) 中的 `inter_plane_gossip(...)` 实现。
 
 其思想是：
 
@@ -248,7 +248,7 @@
 
 ### 8.5 通信失败补偿
 
-当邻居轨道面模型未成功收到时，由 [4_train/federated/compensation.py](./4_train/federated/compensation.py) 中的 `compensate_missing_model(...)` 进行补偿：
+当邻居轨道面模型未成功收到时，由 [4_train/OrbitShield_FL/compensation.py](./4_train/OrbitShield_FL/compensation.py) 中的 `compensate_missing_model(...)` 进行补偿：
 
 `w_hat_m^t = rho * w_m^{last} + (1-rho) * w_k^{self}`
 
@@ -262,7 +262,7 @@
 
 ### 8.6 信誉更新
 
-信誉机制由 [4_train/federated/reputation.py](./4_train/federated/reputation.py) 实现，核心函数为：
+信誉机制由 [4_train/OrbitShield_FL/reputation.py](./4_train/OrbitShield_FL/reputation.py) 实现，核心函数为：
 
 - `compute_score(...)`
 - `update_reputation(...)`
@@ -281,7 +281,7 @@
 
 ### 8.7 动态拓扑模拟
 
-动态拓扑由 [4_train/federated/topology.py](./4_train/federated/topology.py) 生成。
+动态拓扑由 [4_train/OrbitShield_FL/topology.py](./4_train/OrbitShield_FL/topology.py) 生成。
 
 当前实现不是复杂轨道力学仿真，而是离散时隙近似：
 
@@ -308,7 +308,7 @@
 
 联邦主控不采用传统中心式 `server` 命名，而是使用：
 
-- [4_train/federated/serverless_orchestrator.py](./4_train/federated/serverless_orchestrator.py)
+- [4_train/OrbitShield_FL/serverless_orchestrator.py](./4_train/OrbitShield_FL/serverless_orchestrator.py)
 
 其中的核心类是：
 
@@ -316,7 +316,7 @@
 
 主流程如下：
 
-1. 加载 `dataset_window`
+1. 加载 `dataset_cicids17`
 2. 对训练集进行联邦划分
 3. 创建 12 个 `FederatedClient`
 4. 为每轮生成动态拓扑
@@ -330,24 +330,24 @@
 
 脚本层的直接入口是：
 
-- [4_train/scripts/train_federated_window.py](./4_train/scripts/train_federated_window.py)
+- [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
 
 ## 10. 代码结构说明
 
 联邦模块位于：
 
-- [4_train/federated/__init__.py](./4_train/federated/__init__.py)
-- [4_train/federated/config.py](./4_train/federated/config.py)
-- [4_train/federated/client.py](./4_train/federated/client.py)
-- [4_train/federated/serverless_orchestrator.py](./4_train/federated/serverless_orchestrator.py)
-- [4_train/federated/topology.py](./4_train/federated/topology.py)
-- [4_train/federated/contact_plan.py](./4_train/federated/contact_plan.py)
-- [4_train/federated/aggregators.py](./4_train/federated/aggregators.py)
-- [4_train/federated/gossip.py](./4_train/federated/gossip.py)
-- [4_train/federated/compensation.py](./4_train/federated/compensation.py)
-- [4_train/federated/reputation.py](./4_train/federated/reputation.py)
-- [4_train/federated/partition.py](./4_train/federated/partition.py)
-- [4_train/federated/metrics_fl.py](./4_train/federated/metrics_fl.py)
+- [4_train/OrbitShield_FL/__init__.py](./4_train/OrbitShield_FL/__init__.py)
+- [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py)
+- [4_train/OrbitShield_FL/client.py](./4_train/OrbitShield_FL/client.py)
+- [4_train/OrbitShield_FL/serverless_orchestrator.py](./4_train/OrbitShield_FL/serverless_orchestrator.py)
+- [4_train/OrbitShield_FL/topology.py](./4_train/OrbitShield_FL/topology.py)
+- [4_train/OrbitShield_FL/contact_plan.py](./4_train/OrbitShield_FL/contact_plan.py)
+- [4_train/OrbitShield_FL/aggregators.py](./4_train/OrbitShield_FL/aggregators.py)
+- [4_train/OrbitShield_FL/gossip.py](./4_train/OrbitShield_FL/gossip.py)
+- [4_train/OrbitShield_FL/compensation.py](./4_train/OrbitShield_FL/compensation.py)
+- [4_train/OrbitShield_FL/reputation.py](./4_train/OrbitShield_FL/reputation.py)
+- [4_train/OrbitShield_FL/partition.py](./4_train/OrbitShield_FL/partition.py)
+- [4_train/OrbitShield_FL/metrics_fl.py](./4_train/OrbitShield_FL/metrics_fl.py)
 
 各文件职责如下：
 
@@ -481,36 +481,31 @@
 
 ### 11.1 主训练脚本
 
-- [4_train/scripts/train_federated_window.py](./4_train/scripts/train_federated_window.py)
+- [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
 
 主要参数包括：
 
-- `--data_dir`
-- `--num_clients`
-- `--num_planes`
+- `--dataset`
 - `--rounds`
 - `--local_epochs`
 - `--batch_size`
-- `--partition_mode`
-- `--dirichlet_alpha`
-- `--beta`
-- `--beta_floor`
-- `--lambda_s`
-- `--rho`
-- `--mu`
-- `--global_momentum`
-- `--warmup_rounds`
+- `--num_clients`
+- `--num_planes`
 - `--device`
 - `--output_dir`
 - `--method`
+- `--full_eval`
+- `--from_scratch`
 
-### 11.2 联邦 demo 脚本
+大多数联邦超参数已经固化为脚本内部默认值，常规运行通常不需要再显式设置。
 
-- [4_train/scripts/run_federated_demo.sh](./4_train/scripts/run_federated_demo.sh)
+### 11.2 联邦默认脚本
+
+- [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh)
 
 该脚本已经固定为当前最优联邦配置，默认直接输出到：
 
-- `experiments_window/federated/OrbitShield_FL`
+- `experiments/OrbitShield_FL/cicids17`
 
 ### 11.3 联邦方法对比脚本
 
@@ -538,7 +533,7 @@
 
 ### 11.5 网格搜索绘图脚本
 
-- [4_train/scripts/plot_federated_full_grid.py](./4_train/scripts/plot_federated_full_grid.py)
+- [4_train/scripts/plot_federated_grid_search.py](./4_train/scripts/plot_federated_grid_search.py)
 
 用于绘制：
 
@@ -570,12 +565,12 @@
 
 为了提升联邦训练早期收敛速度，当前联邦训练默认从单机最佳模型开始：
 
-- [4_train/checkpoints_gru/window_gru_best.pt](./4_train/checkpoints_gru/window_gru_best.pt)
+- [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt)
 
 早期验证结果表明：
 
-- 不使用 warm start 时，1 轮 smoke test 准确率约为 `0.3654`
-- 使用 warm start 后，1 轮 smoke test 准确率可提升到约 `0.9002`
+- 不使用 warm start 时，1 轮快速验证准确率约为 `0.3654`
+- 使用 warm start 后，1 轮快速验证准确率可提升到约 `0.9002`
 
 因此，`OrbitShield_FL` 最终将 warm start 固化为默认行为之一。
 
@@ -583,7 +578,7 @@
 
 当前最终联邦版本目录：
 
-- [4_train/experiments_window/federated/OrbitShield_FL](./4_train/experiments_window/federated/OrbitShield_FL)
+- [4_train/experiments/OrbitShield_FL/cicids17](./4_train/experiments/OrbitShield_FL/cicids17)
 
 当前正式结果为：
 
@@ -615,12 +610,12 @@
 
 为了继续提升完整联邦方案，本项目保留了完整网格搜索档案：
 
-- [4_train/experiments_window/federated/full_grid](./4_train/experiments_window/federated/full_grid)
+- [4_train/experiments/OrbitShield_FL/grid_search](./4_train/experiments/OrbitShield_FL/grid_search)
 
 核心汇总文件包括：
 
-- [full_grid_summary.csv](./4_train/experiments_window/federated/full_grid/full_grid_summary.csv)
-- [full_grid_results.json](./4_train/experiments_window/federated/full_grid/full_grid_results.json)
+- [grid_search_summary.csv](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_summary.csv)
+- [grid_search_results.json](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_results.json)
 
 当前最优配置为：
 
@@ -630,6 +625,7 @@
 - `beta_floor = 0.05`
 
 这套参数就是当前正式版 `OrbitShield_FL` 的来源。
+并且它已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的 `full` 正式 preset 中。
 
 前 5 组配置如下：
 
@@ -645,9 +641,9 @@
 
 当前已经生成的调参图包括：
 
-- [OrbitShield_FL_heatmaps.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_heatmaps.png)
-- [OrbitShield_FL_trends.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_trends.png)
-- [OrbitShield_FL_top10.png](./4_train/experiments_window/federated/full_grid/plots/OrbitShield_FL_top10.png)
+- [OrbitShield_FL_heatmaps.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_heatmaps.png)
+- [OrbitShield_FL_trends.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_trends.png)
+- [OrbitShield_FL_top10.png](./4_train/experiments/OrbitShield_FL/grid_search/plots/OrbitShield_FL_top10.png)
 
 这些图用于回答三个问题：
 
@@ -667,42 +663,61 @@
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-./scripts/run_federated_demo.sh
+./scripts/run_federated.sh
 ```
 
 ### 17.2 直接命令行运行
 
 ```bash
-/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_window.py \
-  --data_dir ../dataset_window \
-  --num_clients 12 \
-  --num_planes 3 \
-  --rounds 20 \
-  --local_epochs 1 \
-  --batch_size 512 \
-  --partition_mode dirichlet \
-  --dirichlet_alpha 0.3 \
-  --beta 0.1 \
-  --beta_floor 0.05 \
-  --lambda_s 0.1 \
-  --rho 0.5 \
-  --mu 0.8 \
-  --global_momentum 0.1 \
-  --warmup_rounds 2 \
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
+  --dataset cicids17 \
   --method full \
-  --init_checkpoint checkpoints_gru/window_gru_best.pt \
-  --device cuda \
-  --output_dir experiments_window/federated/OrbitShield_FL
+  --device cuda
 ```
 
 ### 17.3 重绘调参图
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_federated_full_grid.py \
-  --csv_path experiments_window/federated/full_grid/full_grid_summary.csv \
-  --output_dir experiments_window/federated/full_grid/plots
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_federated_grid_search.py \
+  --csv_path experiments/OrbitShield_FL/grid_search/grid_search_summary.csv \
+  --output_dir experiments/OrbitShield_FL/grid_search/plots
 ```
+
+### 17.4 在 STI 上运行完整联邦训练
+
+`STI` 的训练样本、验证样本和测试样本规模都远大于 `cicids17`。因此在 `STI` 上，联邦训练默认额外启用了两项工程优化：
+
+- 每轮仅使用 `50,000` 条固定验证子集做验证
+- 完整测试集仅在训练结束后执行一次
+
+同时默认启用：
+
+- `max_local_batches = 128`
+
+即每颗卫星在每轮本地更新时只执行固定 batch 预算的本地 SGD，而不是完整扫过本地全部数据。这样既保留了联邦算法结构，也把超大数据集上的运行时间控制在可接受范围。
+
+实际运行命令如下：
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
+  --dataset sti \
+  --method full \
+  --device cuda
+```
+
+结果目录：
+
+- [OrbitShield_FL_sti](./4_train/experiments/OrbitShield_FL/sti)
+
+实际结果：
+
+- `Best Val Acc = 0.9956`
+- `Test Accuracy = 0.9955`
+- `Test Precision = 0.9955`
+- `Test Recall = 0.9955`
+- `Test F1 = 0.9955`
 
 ## 18. 论文式实验分析
 
@@ -748,3 +763,231 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 如果只保留一个最终联邦版本，当前正式推荐的就是：
 
 - `OrbitShield_FL`
+
+## 21. ns-3 驱动的联邦协同仿真扩展
+
+除了默认的启发式动态拓扑版本外，当前工程还新增了一条独立的 `ns-3` 驱动联邦协同仿真链路，用于提升低轨卫星通信环境建模的可信度。
+
+这里必须强调一个边界：
+
+- [realtime_satellite.cc](./realtime_satellite.cc) 不参与联邦训练环境仿真
+- [realtime_satellite.cc](./realtime_satellite.cc) 仍然只负责数据集生成
+
+因此，项目中的 `ns-3` 现在分成两条互不干扰的用途：
+
+1. 数据生成  
+   `原始 PCAP -> realtime_satellite.cc -> captured -> 特征提取 -> dataset_cicids17 / dataset_sti`
+2. 联邦通信环境  
+   `federated_constellation.cc -> ns-3 round trace -> OrbitShield_FL(ns3 backend)`
+
+## 22. 新增模块与职责
+
+ns-3 驱动联邦协同仿真新增了以下模块：
+
+- [federated_constellation.cc](./federated_constellation.cc)  
+  独立的 ns-3 星座通信环境仿真器，负责导出轮级通信 trace
+- [4_train/OrbitShield_FL/ns3_bridge.py](./4_train/OrbitShield_FL/ns3_bridge.py)  
+  负责调用 ns-3 二进制、加载 `manifest.json` 和每轮 trace、做字段校验
+- [4_train/OrbitShield_FL/topology_ns3.py](./4_train/OrbitShield_FL/topology_ns3.py)  
+  负责把 ns-3 trace 映射为联邦主控能直接使用的拓扑快照
+- [4_train/OrbitShield_FL/transfer_scheduler.py](./4_train/OrbitShield_FL/transfer_scheduler.py)  
+  负责根据模型大小、带宽、丢包和接触窗口，判断模型能否在本轮成功传输
+- [4_train/scripts/train_federated_ns3.py](./4_train/scripts/train_federated_ns3.py)  
+  独立的 ns-3 联邦训练入口，不替换 [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
+
+这几层的关系是：
+
+`federated_constellation.cc -> ns3_bridge.py -> topology_ns3.py -> serverless_orchestrator.py -> OrbitShield_FL`
+
+## 23. ns-3 trace 的作用
+
+[federated_constellation.cc](./federated_constellation.cc) 会导出：
+
+- `constellation_config.json`
+- `manifest.json`
+- `round_0001.json ... round_xxxx.json`
+
+每轮 trace 至少包含：
+
+- 轨道面内链路状态
+- 轨道面间链路状态
+- 每条链路的：
+  - `available`
+  - `success`
+  - `delay_ms`
+  - `bandwidth_mbps`
+  - `packet_loss`
+  - `contact_duration_s`
+
+这些字段会被联邦主控用于：
+
+1. 决定当前哪些轨道面可以发生 gossip
+2. 估计链路质量并更新鲁棒聚合权重
+3. 判断模型参数是否能在接触窗口内传完
+
+第 3 点是本次扩展的核心。默认启发式拓扑只能近似表示“链路好坏”，而 `ns-3` 驱动版本可以更进一步判断：
+
+- 当前链路是否存在
+- 当前链路是否成功
+- 当前窗口是否足够支撑一次模型交换
+
+如果传输不能完成，则本轮 gossip 失败，并进入当前已有的补偿逻辑。
+
+## 24. 代码实现要点
+
+### 24.1 `federated_constellation.cc`
+
+该程序完成以下工作：
+
+- 构建多轨道面、多卫星节点
+- 按 ring 结构建立面内链路和面间链路
+- 以轮为单位生成通信状态
+- 导出完整的 trace 目录
+
+它当前支持的关键输入包括：
+
+- `--num-planes`
+- `--sats-per-plane`
+- `--rounds`
+- `--round-duration`
+- `--intra-rate / --intra-delay / --intra-loss`
+- `--inter-rate / --inter-delay / --inter-loss`
+- `--contact-period`
+- `--contact-duration-rounds`
+- `--output-dir`
+- `--seed`
+
+### 24.2 `ns3_bridge.py`
+
+该模块提供：
+
+- `run_federated_constellation(...)`
+- `load_ns3_trace_bundle(...)`
+- `load_ns3_round_trace(...)`
+- `validate_round_trace(...)`
+
+也就是说，Python 侧不直接散乱读取 json，而是统一通过桥接层获取经过校验的 trace。
+
+### 24.3 `topology_ns3.py`
+
+该模块负责把 `ns-3` 轮级 trace 转成和现有联邦框架兼容的拓扑快照结构，包括：
+
+- `plane_neighbors`
+- `intra_plane_links`
+- `inter_plane_links`
+- 面内和面间带宽映射
+
+因此，联邦主控不需要重写 gossip 和聚合逻辑，只需要切换 `topology backend` 即可。
+
+### 24.4 `transfer_scheduler.py`
+
+该模块负责计算：
+
+- 模型参数大小
+- 有效吞吐
+- 预计传输耗时
+- 本轮是否能在 `contact_duration_s` 内传完
+
+这让联邦训练真正开始受“通信完成性”约束，而不是只受“抽象成功率”约束。
+
+### 24.5 `train_federated_ns3.py`
+
+该脚本是新的实验入口，特点是：
+
+- 不影响默认 [4_train/scripts/train_federated.py](./4_train/scripts/train_federated.py)
+- 支持直接读取已有 trace
+- 也支持训练前自动调用 ns-3 生成 trace
+
+## 25. 运行方式
+
+### 25.1 使用已有 trace 训练
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_ns3.py \
+  --dataset cicids17 \
+  --trace_dir experiments/OrbitShield_FL_ns3/cicids17_trace \
+  --output_dir experiments/OrbitShield_FL_ns3/cicids17 \
+  --device cuda
+```
+
+这里如果显式传 `--method full`，仍然会自动复用 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 里固化的正式最优 preset。
+
+### 25.2 训练前自动生成 trace
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated_ns3.py \
+  --dataset cicids17 \
+  --rounds 5 \
+  --generate_trace \
+  --trace_output_dir experiments/OrbitShield_FL_ns3/cicids17_trace \
+  --output_dir experiments/OrbitShield_FL_ns3/cicids17 \
+  --device cuda
+```
+
+因此，heuristic 联邦入口和 ns-3 联邦入口在 `full` 模式下使用的是同一套正式最优参数，而不是两套彼此独立的默认值。
+
+## 26. 当前已跑通的 ns-3 联调结果
+
+当前已经实际跑通了一组完整的联调实验：
+
+- ns-3 trace 目录：
+  - [4_train/experiments/OrbitShield_FL_ns3/cicids17_trace](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace)
+- 训练输出目录：
+  - [4_train/experiments/OrbitShield_FL_ns3/cicids17](./4_train/experiments/OrbitShield_FL_ns3/cicids17)
+
+其中 trace 目录包含：
+
+- [constellation_config.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/constellation_config.json)
+- [manifest.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17_trace/manifest.json)
+- 5 个 `round_000x.json`
+
+训练目录包含：
+
+- [summary.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17/summary.json)
+- [round_metrics.csv](./4_train/experiments/OrbitShield_FL_ns3/cicids17/round_metrics.csv)
+- [best_global_model.pt](./4_train/experiments/OrbitShield_FL_ns3/cicids17/best_global_model.pt)
+- [partition_stats.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17/partition_stats.json)
+- [reputation_history.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17/reputation_history.json)
+- [topology_history.json](./4_train/experiments/OrbitShield_FL_ns3/cicids17/topology_history.json)
+
+本次联调条件：
+
+- 数据集：`cicids17`
+- backend：`ns3`
+- 轮数：`5`
+- trace：自动生成
+- 设备：`cuda`
+
+实际结果为：
+
+- `Best Val Accuracy = 0.9715`
+- `Test Accuracy = 0.9473`
+- `Test Precision = 0.9524`
+- `Test Recall = 0.9473`
+- `Test F1 = 0.9479`
+
+混淆矩阵：
+
+```text
+[[6126,    0,  571],
+ [  19, 6149,  380],
+ [  13,   71, 6671]]
+```
+
+这组结果的意义主要在于证明：
+
+- 新增的 ns-3 星座联邦环境仿真器已经能稳定工作
+- trace 桥接、拓扑映射和传输调度都已接入联邦主控
+- `OrbitShield_FL` 已经从“启发式低轨联邦”扩展成“支持 ns-3 驱动通信环境的低轨联邦”
+
+## 27. 当前判断
+
+默认的 `OrbitShield_FL` 结果仍然是当前项目中用于算法对比和最终报告的正式联邦结果，因为那套实验已经做了完整调参和结果固化。
+
+新增的 ns-3 驱动版本当前更适合承担以下角色：
+
+1. 作为更高可信度的通信环境验证链路
+2. 作为后续论文中“算法在更真实低轨通信条件下仍可运行”的支撑实验
+3. 作为后续继续扩展星地链路、时变容量和更真实接触图的基础工程框架

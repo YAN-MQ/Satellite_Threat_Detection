@@ -1,0 +1,249 @@
+{
+  "config": {
+    "dataset": "sti",
+    "data_dir": "../dataset_sti",
+    "output_dir": "experiments/OrbitShield_FL/sti_full_exact",
+    "method": "full",
+    "num_clients": 12,
+    "num_planes": 3,
+    "rounds": 20,
+    "local_epochs": 1,
+    "max_local_batches": 128,
+    "batch_size": 512,
+    "input_dim": 20,
+    "num_classes": 8,
+    "hidden_dim": 64,
+    "bidirectional": false,
+    "dropout": 0.3,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "init_checkpoint": "checkpoints_gru/sti_gru_best.pt",
+    "max_samples": null,
+    "eval_subset_size": null,
+    "test_subset_size": null,
+    "eval_every": 1,
+    "test_every": 1,
+    "partition_mode": "dirichlet",
+    "dirichlet_alpha": 0.3,
+    "beta": 0.1,
+    "beta_floor": 0.05,
+    "lambda_s": 0.1,
+    "rho": 0.5,
+    "mu": 0.8,
+    "global_momentum": 0.1,
+    "warmup_rounds": 2,
+    "r_min": 0.1,
+    "seed": 42,
+    "device": "cuda",
+    "intra_plane_success_prob": 0.98,
+    "inter_plane_success_prob": 0.75,
+    "inter_plane_contact_period": 4,
+    "inter_plane_contact_duration": 2,
+    "packet_loss_prob": 0.05,
+    "link_delay_mean": 25.0,
+    "stable_score_weights": [
+      0.4,
+      0.4,
+      0.2
+    ],
+    "class_names": [
+      "Benign",
+      "Signal Disruption",
+      "UDP flood",
+      "Jamming",
+      "Bruteforce",
+      "Infiltration",
+      "DoS",
+      "DDoS"
+    ]
+  },
+  "device": "cuda",
+  "best_model_path": "experiments/OrbitShield_FL/sti_full_exact/best_global_model.pt",
+  "final_round": {
+    "round": 20,
+    "val_loss": 0.018349,
+    "val_accuracy": 0.995809,
+    "val_precision": 0.995828,
+    "val_recall": 0.995809,
+    "val_f1": 0.995809,
+    "test_accuracy": 0.995868,
+    "test_precision": 0.995885,
+    "test_recall": 0.995868,
+    "test_f1": 0.995868,
+    "communication_cost_mb": 2.065903,
+    "stale_update_ratio": 0.0,
+    "link_failure_robustness": 0.888889,
+    "confusion_matrix": "[[134920, 0, 93, 149, 390, 152, 0, 1], [0, 30854, 0, 0, 0, 0, 0, 0], [4, 0, 49113, 0, 0, 0, 0, 0], [34, 0, 0, 28512, 0, 93, 0, 0], [0, 0, 0, 0, 39062, 0, 2, 6], [258, 0, 0, 71, 0, 36186, 0, 0], [0, 0, 0, 0, 0, 0, 49174, 478], [1, 0, 0, 0, 21, 0, 1, 54896]]",
+    "plane_meta": {
+      "0": {
+        "client_weights": {
+          "sat_0": 0.27434114162124595,
+          "sat_1": 0.1585356689434151,
+          "sat_2": 0.42878568483474777,
+          "sat_3": 0.13833750460059122
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "1": {
+        "client_weights": {
+          "sat_4": 0.02597715278893574,
+          "sat_5": 0.233022862810541,
+          "sat_6": 0.4930152674842688,
+          "sat_7": 0.24798471691625457
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      },
+      "2": {
+        "client_weights": {
+          "sat_8": 0.3016930013624025,
+          "sat_9": 0.18343216907792295,
+          "sat_10": 0.45038843077250756,
+          "sat_11": 0.06448639878716711
+        },
+        "stale_clients": 4,
+        "participant_count": 4
+      }
+    },
+    "plane_gossip_meta": {
+      "0": {
+        "used_neighbors": [
+          1,
+          2
+        ],
+        "missing_neighbors": [],
+        "adaptive_beta": 0.09033508082945765,
+        "gamma": {
+          "1": 0.5273392681599368,
+          "2": 0.4726607318400632
+        }
+      },
+      "1": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [
+          2
+        ],
+        "adaptive_beta": 0.0837702720057781,
+        "gamma": {
+          "0": 0.6298519597988061,
+          "2": 0.37014804020119385
+        }
+      },
+      "2": {
+        "used_neighbors": [
+          0
+        ],
+        "missing_neighbors": [
+          1
+        ],
+        "adaptive_beta": 0.08156480882367956,
+        "gamma": {
+          "0": 0.3960106354460999,
+          "1": 0.6039893645539001
+        }
+      }
+    }
+  },
+  "final_test_metrics": {
+    "loss": 0.01651642798062307,
+    "accuracy": 0.995971456236115,
+    "precision": 0.996008977078436,
+    "recall": 0.995971456236115,
+    "f1": 0.9959751927465855,
+    "confusion_matrix": [
+      [
+        134727,
+        0,
+        98,
+        366,
+        387,
+        123,
+        0,
+        4
+      ],
+      [
+        0,
+        30854,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        49114,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        13,
+        0,
+        0,
+        28622,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        39058,
+        0,
+        2,
+        10
+      ],
+      [
+        128,
+        0,
+        0,
+        216,
+        0,
+        36171,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        49318,
+        334
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        21,
+        0,
+        1,
+        54897
+      ]
+    ],
+    "label_distribution": {
+      "0": 135705,
+      "1": 30854,
+      "2": 49117,
+      "3": 28639,
+      "4": 39070,
+      "5": 36515,
+      "6": 49652,
+      "7": 54919
+    }
+  }
+}

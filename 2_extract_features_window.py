@@ -13,7 +13,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CAPTURE_DIR = os.path.join(BASE_DIR, "captured_window")
-OUTPUT_DIR = os.path.join(BASE_DIR, "dataset_window")
+OUTPUT_DIR = os.path.join(BASE_DIR, "dataset_cicids17")
 WINDOW = 10
 STRIDE = 1
 FILES = [("benign.pcap", 0), ("ddos.pcap", 1), ("portscan.pcap", 2)]

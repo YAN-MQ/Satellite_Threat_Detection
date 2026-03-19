@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "round": 18,
+  "sim_time_s": 510.000000,
+  "round_duration_s": 30.000000,
+  "num_planes": 3,
+  "sats_per_plane": 4,
+  "planes": {
+    "0": ["sat_0", "sat_1", "sat_2", "sat_3"],
+    "1": ["sat_4", "sat_5", "sat_6", "sat_7"],
+    "2": ["sat_8", "sat_9", "sat_10", "sat_11"]
+  },
+  "satellites": {
+    "sat_0": {"plane_id": 0, "local_index": 0},
+    "sat_1": {"plane_id": 0, "local_index": 1},
+    "sat_2": {"plane_id": 0, "local_index": 2},
+    "sat_3": {"plane_id": 0, "local_index": 3},
+    "sat_4": {"plane_id": 1, "local_index": 0},
+    "sat_5": {"plane_id": 1, "local_index": 1},
+    "sat_6": {"plane_id": 1, "local_index": 2},
+    "sat_7": {"plane_id": 1, "local_index": 3},
+    "sat_8": {"plane_id": 2, "local_index": 0},
+    "sat_9": {"plane_id": 2, "local_index": 1},
+    "sat_10": {"plane_id": 2, "local_index": 2},
+    "sat_11": {"plane_id": 2, "local_index": 3}
+  },
+  "intra_plane_links": {
+    "0": {"available": true, "success": true, "delay_ms": 10.444282, "bandwidth_mbps": 432.031182, "packet_loss": 0.010213, "contact_duration_s": 30.000000},
+    "1": {"available": true, "success": true, "delay_ms": 10.010695, "bandwidth_mbps": 462.978656, "packet_loss": 0.009083, "contact_duration_s": 30.000000},
+    "2": {"available": true, "success": true, "delay_ms": 10.153485, "bandwidth_mbps": 455.013248, "packet_loss": 0.009978, "contact_duration_s": 30.000000}
+  },
+  "inter_plane_links": {
+    "0-1": {"available": true, "success": true, "delay_ms": 25.435405, "bandwidth_mbps": 130.087870, "packet_loss": 0.054162, "contact_duration_s": 30.000000},
+    "0-2": {"available": true, "success": true, "delay_ms": 25.072425, "bandwidth_mbps": 117.381921, "packet_loss": 0.041950, "contact_duration_s": 30.000000},
+    "1-2": {"available": false, "success": false, "delay_ms": 0.000000, "bandwidth_mbps": 0.000000, "packet_loss": 1.000000, "contact_duration_s": 0.000000}
+  },
+  "satellite_links": [
+    {"link_id": "intra_p0_0_1", "link_type": "intra_plane", "endpoint_a": "sat_0", "endpoint_b": "sat_1", "plane_a": 0, "plane_b": 0, "subnet": "10.1.1.0", "available": true, "success": true, "delay_ms": 10.444282, "bandwidth_mbps": 432.031182, "packet_loss": 0.010213, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p0_1_2", "link_type": "intra_plane", "endpoint_a": "sat_1", "endpoint_b": "sat_2", "plane_a": 0, "plane_b": 0, "subnet": "10.1.2.0", "available": true, "success": true, "delay_ms": 10.444282, "bandwidth_mbps": 432.031182, "packet_loss": 0.010213, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p0_2_3", "link_type": "intra_plane", "endpoint_a": "sat_2", "endpoint_b": "sat_3", "plane_a": 0, "plane_b": 0, "subnet": "10.1.3.0", "available": true, "success": true, "delay_ms": 10.444282, "bandwidth_mbps": 432.031182, "packet_loss": 0.010213, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p0_3_0", "link_type": "intra_plane", "endpoint_a": "sat_3", "endpoint_b": "sat_0", "plane_a": 0, "plane_b": 0, "subnet": "10.1.4.0", "available": true, "success": true, "delay_ms": 10.444282, "bandwidth_mbps": 432.031182, "packet_loss": 0.010213, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p1_0_1", "link_type": "intra_plane", "endpoint_a": "sat_4", "endpoint_b": "sat_5", "plane_a": 1, "plane_b": 1, "subnet": "10.1.5.0", "available": true, "success": true, "delay_ms": 10.010695, "bandwidth_mbps": 462.978656, "packet_loss": 0.009083, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p1_1_2", "link_type": "intra_plane", "endpoint_a": "sat_5", "endpoint_b": "sat_6", "plane_a": 1, "plane_b": 1, "subnet": "10.1.6.0", "available": true, "success": true, "delay_ms": 10.010695, "bandwidth_mbps": 462.978656, "packet_loss": 0.009083, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p1_2_3", "link_type": "intra_plane", "endpoint_a": "sat_6", "endpoint_b": "sat_7", "plane_a": 1, "plane_b": 1, "subnet": "10.1.7.0", "available": true, "success": true, "delay_ms": 10.010695, "bandwidth_mbps": 462.978656, "packet_loss": 0.009083, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p1_3_0", "link_type": "intra_plane", "endpoint_a": "sat_7", "endpoint_b": "sat_4", "plane_a": 1, "plane_b": 1, "subnet": "10.1.8.0", "available": true, "success": true, "delay_ms": 10.010695, "bandwidth_mbps": 462.978656, "packet_loss": 0.009083, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p2_0_1", "link_type": "intra_plane", "endpoint_a": "sat_8", "endpoint_b": "sat_9", "plane_a": 2, "plane_b": 2, "subnet": "10.1.9.0", "available": true, "success": true, "delay_ms": 10.153485, "bandwidth_mbps": 455.013248, "packet_loss": 0.009978, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p2_1_2", "link_type": "intra_plane", "endpoint_a": "sat_9", "endpoint_b": "sat_10", "plane_a": 2, "plane_b": 2, "subnet": "10.1.10.0", "available": true, "success": true, "delay_ms": 10.153485, "bandwidth_mbps": 455.013248, "packet_loss": 0.009978, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p2_2_3", "link_type": "intra_plane", "endpoint_a": "sat_10", "endpoint_b": "sat_11", "plane_a": 2, "plane_b": 2, "subnet": "10.1.11.0", "available": true, "success": true, "delay_ms": 10.153485, "bandwidth_mbps": 455.013248, "packet_loss": 0.009978, "contact_duration_s": 30.000000},
+    {"link_id": "intra_p2_3_0", "link_type": "intra_plane", "endpoint_a": "sat_11", "endpoint_b": "sat_8", "plane_a": 2, "plane_b": 2, "subnet": "10.1.12.0", "available": true, "success": true, "delay_ms": 10.153485, "bandwidth_mbps": 455.013248, "packet_loss": 0.009978, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p0_p1_l0", "link_type": "inter_plane", "endpoint_a": "sat_0", "endpoint_b": "sat_4", "plane_a": 0, "plane_b": 1, "subnet": "10.1.13.0", "available": true, "success": true, "delay_ms": 25.435405, "bandwidth_mbps": 130.087870, "packet_loss": 0.054162, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p0_p1_l1", "link_type": "inter_plane", "endpoint_a": "sat_1", "endpoint_b": "sat_5", "plane_a": 0, "plane_b": 1, "subnet": "10.1.14.0", "available": true, "success": true, "delay_ms": 25.435405, "bandwidth_mbps": 130.087870, "packet_loss": 0.054162, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p0_p1_l2", "link_type": "inter_plane", "endpoint_a": "sat_2", "endpoint_b": "sat_6", "plane_a": 0, "plane_b": 1, "subnet": "10.1.15.0", "available": true, "success": true, "delay_ms": 25.435405, "bandwidth_mbps": 130.087870, "packet_loss": 0.054162, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p0_p1_l3", "link_type": "inter_plane", "endpoint_a": "sat_3", "endpoint_b": "sat_7", "plane_a": 0, "plane_b": 1, "subnet": "10.1.16.0", "available": true, "success": true, "delay_ms": 25.435405, "bandwidth_mbps": 130.087870, "packet_loss": 0.054162, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p1_p2_l0", "link_type": "inter_plane", "endpoint_a": "sat_4", "endpoint_b": "sat_8", "plane_a": 1, "plane_b": 2, "subnet": "10.1.17.0", "available": false, "success": false, "delay_ms": 0.000000, "bandwidth_mbps": 0.000000, "packet_loss": 1.000000, "contact_duration_s": 0.000000},
+    {"link_id": "inter_p1_p2_l1", "link_type": "inter_plane", "endpoint_a": "sat_5", "endpoint_b": "sat_9", "plane_a": 1, "plane_b": 2, "subnet": "10.1.18.0", "available": false, "success": false, "delay_ms": 0.000000, "bandwidth_mbps": 0.000000, "packet_loss": 1.000000, "contact_duration_s": 0.000000},
+    {"link_id": "inter_p1_p2_l2", "link_type": "inter_plane", "endpoint_a": "sat_6", "endpoint_b": "sat_10", "plane_a": 1, "plane_b": 2, "subnet": "10.1.19.0", "available": false, "success": false, "delay_ms": 0.000000, "bandwidth_mbps": 0.000000, "packet_loss": 1.000000, "contact_duration_s": 0.000000},
+    {"link_id": "inter_p1_p2_l3", "link_type": "inter_plane", "endpoint_a": "sat_7", "endpoint_b": "sat_11", "plane_a": 1, "plane_b": 2, "subnet": "10.1.20.0", "available": false, "success": false, "delay_ms": 0.000000, "bandwidth_mbps": 0.000000, "packet_loss": 1.000000, "contact_duration_s": 0.000000},
+    {"link_id": "inter_p2_p0_l0", "link_type": "inter_plane", "endpoint_a": "sat_8", "endpoint_b": "sat_0", "plane_a": 2, "plane_b": 0, "subnet": "10.1.21.0", "available": true, "success": true, "delay_ms": 25.072425, "bandwidth_mbps": 117.381921, "packet_loss": 0.041950, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p2_p0_l1", "link_type": "inter_plane", "endpoint_a": "sat_9", "endpoint_b": "sat_1", "plane_a": 2, "plane_b": 0, "subnet": "10.1.22.0", "available": true, "success": true, "delay_ms": 25.072425, "bandwidth_mbps": 117.381921, "packet_loss": 0.041950, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p2_p0_l2", "link_type": "inter_plane", "endpoint_a": "sat_10", "endpoint_b": "sat_2", "plane_a": 2, "plane_b": 0, "subnet": "10.1.23.0", "available": true, "success": true, "delay_ms": 25.072425, "bandwidth_mbps": 117.381921, "packet_loss": 0.041950, "contact_duration_s": 30.000000},
+    {"link_id": "inter_p2_p0_l3", "link_type": "inter_plane", "endpoint_a": "sat_11", "endpoint_b": "sat_3", "plane_a": 2, "plane_b": 0, "subnet": "10.1.24.0", "available": true, "success": true, "delay_ms": 25.072425, "bandwidth_mbps": 117.381921, "packet_loss": 0.041950, "contact_duration_s": 30.000000}
+  ]
+}

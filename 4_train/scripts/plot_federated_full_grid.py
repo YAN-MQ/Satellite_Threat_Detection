@@ -15,11 +15,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Plot OrbitShield_FL grid-search results")
     parser.add_argument(
         "--csv_path",
-        default="experiments_window/federated/full_grid/full_grid_summary.csv",
+        default="experiments/OrbitShield_FL/grid_search/grid_search_summary.csv",
     )
     parser.add_argument(
         "--output_dir",
-        default="experiments_window/federated/full_grid/plots",
+        default="experiments/OrbitShield_FL/grid_search/plots",
     )
     return parser.parse_args()
 
