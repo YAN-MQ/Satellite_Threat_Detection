@@ -86,6 +86,8 @@ class ServerlessOrchestrator:
             hidden_dim=config.hidden_dim,
             bidirectional=config.bidirectional,
             dropout=config.dropout,
+            conv_dim=config.conv_dim,
+            dsc_dim=config.dsc_dim,
             device=self.device,
         )
         self.global_model = self._create_model()
@@ -165,6 +167,8 @@ class ServerlessOrchestrator:
             hidden_dim=self.config.hidden_dim,
             bidirectional=self.config.bidirectional,
             dropout=self.config.dropout,
+            conv_dim=self.config.conv_dim,
+            dsc_dim=self.config.dsc_dim,
         ).to(self.device)
 
     def _build_clients(self) -> dict[str, FederatedClient]:
@@ -183,6 +187,8 @@ class ServerlessOrchestrator:
                 hidden_dim=self.config.hidden_dim,
                 bidirectional=self.config.bidirectional,
                 dropout=self.config.dropout,
+                conv_dim=self.config.conv_dim,
+                dsc_dim=self.config.dsc_dim,
                 device=self.device,
             )
         return clients
@@ -265,6 +271,10 @@ class ServerlessOrchestrator:
             seed=self.config.seed,
         )
 
+    def _uses_ns3_backend(self) -> bool:
+        """Return whether the current topology backend is ns-3-based."""
+        return self.config.topology_backend in {"ns3", "ns3_online"}
+
     def train_one_federated_round(self, round_idx: int) -> dict[str, object]:
         """Execute one federated training round across the constellation."""
         effective_method = self.config.method
@@ -318,7 +328,7 @@ class ServerlessOrchestrator:
                 weight_decay=self.config.weight_decay,
                 max_local_batches=self.config.max_local_batches,
             )
-            if self.config.topology_backend == "ns3":
+            if self._uses_ns3_backend():
                 intra_bandwidth = float(topology.get("intra_plane_bandwidth_mbps", {}).get(client.plane_id, 0.0))
                 if not can_transfer_model(
                     model_size_bytes=model_state_size_bytes(result.weights),
@@ -399,7 +409,7 @@ class ServerlessOrchestrator:
                 pair = tuple(sorted((plane_id, neighbor)))
                 link_state = topology["inter_plane_links"][pair]
                 model_can_transfer = True
-                if self.config.topology_backend == "ns3":
+                if self._uses_ns3_backend():
                     inter_bandwidth = float(topology.get("inter_plane_bandwidth_mbps", {}).get(pair, 0.0))
                     model_can_transfer = can_transfer_model(
                         model_size_bytes=model_state_size_bytes(plane_models[neighbor]),

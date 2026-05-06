@@ -33,7 +33,7 @@
 
 ## 当前保留内容
 
-当前目录只保留以下实验闭环：
+当前目录只保留以下正式实验闭环：
 
 - 论文：`66398.pdf`
 - 时间窗提取与分片：`1_fragment_pcap_window.py`
@@ -41,7 +41,12 @@
 - 实时仿真：`realtime_satellite.cc`、`CMakeLists.txt`、`run_all_window.sh`
 - 当前数据产物：`fragments_window/`、`captured_window/`、`dataset_cicids17/`
 - 新增结构化数据集：`STI_dataset/`、`dataset_sti/`
-- 当前训练与扩展实验：`4_train/`
+- 单体训练、对比、消融、压缩与可视化：`4_train/`
+- 联邦正式结果：`4_train/experiments/OrbitShield_FL/`
+- `ns-3` trace 驱动联邦结果：`4_train/experiments/OrbitShield_FL_ns3/`
+- Level 3 在线协同联邦结果：`4_train/experiments/OrbitShield_FL_ns3_online/`
+- Level 4B `ns-3 + libtorch` 结果：`4_train/experiments/OrbitShield_FL_ns3_libtorch/`
+- 联邦可视化汇总：`4_train/experiments/visualization/`
 
 原始版、鲁棒版、历史 checkpoint、旧文档和过时脚本都已经移除。
 
@@ -127,11 +132,11 @@ cmake --build build --target scratch_06_realtime_emulation_realtime_satellite -j
 
 ### 当前环境限制
 
-在这台 WSL 环境中，顶层 `cmake -S . -B build` / `./ns3 build realtime_satellite` 的重新生成步骤仍然比较慢，因此本次完整大样本仿真实际使用的是已存在的 `realtime_satellite_manual` 二进制作为运行入口。
+在这台 WSL 环境中，顶层 `cmake -S . -B build` / `./ns3 build realtime_satellite` 的重新生成步骤仍然比较慢，因此完整大样本仿真优先通过已构建好的 scratch 目标执行，而不是重新走一遍全量顶层重配置。
 
 也就是说：
 
-- “手工编译命令”已经不再是工程唯一入口
+- 手工编译命令已经不再是工程唯一入口
 - 正式 CMake target 已经并回工程
 - 但本机上的顶层重配置性能问题还没有完全消掉
 
@@ -597,14 +602,12 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - [4_train/run_train.sh](./4_train/run_train.sh)
 - [4_train/run_ablation.sh](./4_train/run_ablation.sh)
 - [4_train/run_comparison.sh](./4_train/run_comparison.sh)
-- [4_train/run_tune_full.sh](./4_train/run_tune_full.sh)
 
 例如：
 
 ```bash
 ./run_ablation.sh --epochs 20
 ./run_comparison.sh --epochs 20
-./run_tune_full.sh --epochs 20 --max_runs 4
 ```
 
 如果你想直接调 Python 脚本，也可以：
@@ -713,10 +716,10 @@ Best model saved to checkpoints_gru/cicids17_gru_best.pt (Val Acc: 0.9902)
 
 测试集结果：
 
-- `Accuracy`: `0.9886`
-- `Precision`: `0.9887`
-- `Recall`: `0.9886`
-- `F1`: `0.9886`
+- `Accuracy`: `0.9884`
+- `Precision`: `0.9885`
+- `Recall`: `0.9884`
+- `F1`: `0.9885`
 
 混淆矩阵：
 
@@ -759,22 +762,24 @@ Best model saved to checkpoints_gru/cicids17_gru_best.pt (Val Acc: 0.9902)
 在不覆盖现有主实验结果的前提下，当前新增了 3 个独立脚本，输出默认写入 `4_train/experiments/`：
 
 - [4_train/scripts/run_ablation.py](./4_train/scripts/run_ablation.py)
-  - 基于当前 `dataset_cicids17` 运行 `full / no_dsc / no_cbam / no_gru` 消融实验
+  - 基于当前 `dataset_cicids17` 运行 `dsc_cbam_gru / no_dsc / no_cbam / no_gru` 消融实验
 - [4_train/scripts/run_comparison.py](./4_train/scripts/run_comparison.py)
-  - 运行 `DSC-CBAM-GRU / DSC-CBAM-LSTM / MLP / CNN-LSTM / RF / ID3` 对比实验
+  - 运行 `DSC-CBAM-GRU / DSC-CBAM-LSTM / CNN-LSTM / RF / ID3` 对比实验
 - [4_train/scripts/plot_tsne.py](./4_train/scripts/plot_tsne.py)
   - 读取当前 `cicids17_gru_best.pt` 并生成新的 t-SNE 图
 
-此外，当前还新增了 2 个模型压缩脚本：
+此外，当前还新增了正式的后训练压缩脚本：
 
-- [4_train/scripts/prune_model.py](./4_train/scripts/prune_model.py)
-  - 对当前 `DSC-CBAM-GRU` 做后训练全局非结构化剪枝
-  - 默认剪枝 `Conv1D / DSC / CBAM 内线性层 / GRU / FC` 的权重
-  - 输出剪枝后的 checkpoint 和精度、稀疏率、推理时延汇总
-- [4_train/scripts/quantize_model.py](./4_train/scripts/quantize_model.py)
-  - 对当前 `DSC-CBAM-GRU` 做后训练动态量化
-  - 默认量化 `GRU` 和 `Linear` 为 `INT8`
-  - 输出量化后的 checkpoint 和精度、文件大小、推理时延汇总
+- [4_train/scripts/run_post_training_int8_cpu.py](./4_train/scripts/run_post_training_int8_cpu.py)
+  - 基于已有 `cicids17_gru_best.pt` 做定向剪枝与动态 `INT8` 量化
+  - 部署口径固定为 `CPU + TorchScript`
+  - 输出压缩后的 checkpoint 和正式摘要文件
+- [4_train/scripts/run_post_training_fp16_gpu.py](./4_train/scripts/run_post_training_fp16_gpu.py)
+  - 基于已有 `cicids17_gru_best.pt` 做定向剪枝与 `FP16` GPU 推理评估
+  - 用于补充比较 GPU 部署口径
+- [4_train/scripts/search_post_training_compression.py](./4_train/scripts/search_post_training_compression.py)
+  - 用于系统扫描不同剪枝比例和部署 batch 设置
+  - 自动汇总 CPU `INT8` 与 GPU `FP16` 路线结果
 
 示例：
 
@@ -784,89 +789,55 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 python3 scripts/run_ablation.py --data_dir ../dataset_cicids17 --epochs 20
 python3 scripts/run_comparison.py --data_dir ../dataset_cicids17 --epochs 20
 python3 scripts/plot_tsne.py --data_dir ../dataset_cicids17 --model_path checkpoints_gru/cicids17_gru_best.pt
-python3 scripts/prune_model.py --data_dir ../dataset_cicids17 --checkpoint checkpoints_gru/cicids17_gru_best.pt --amount 0.30
-python3 scripts/quantize_model.py --data_dir ../dataset_cicids17 --checkpoint checkpoints_gru/cicids17_gru_best.pt
+python3 scripts/run_post_training_int8_cpu.py --checkpoint checkpoints_gru/cicids17_gru_best.pt
 ```
 
 ## 模型压缩脚本
 
-### 1. 剪枝脚本
+### 1. 正式后训练压缩脚本
 
-[4_train/scripts/prune_model.py](./4_train/scripts/prune_model.py) 使用 PyTorch 原生剪枝接口做后训练压缩，流程为：
+[4_train/scripts/run_post_training_int8_cpu.py](./4_train/scripts/run_post_training_int8_cpu.py) 的流程为：
 
-1. 加载当前 `cicids17_gru_best.pt`
-2. 在测试集上评估基线模型
-3. 对卷积层、注意力层、GRU 和全连接层做全局 `L1` 非结构化剪枝
-4. 移除 pruning re-parameterization，导出普通 `state_dict`
-5. 再次评估剪枝后模型，并统计：
-   - `Accuracy / Precision / Recall / F1`
-   - `Confusion Matrix`
-   - `Sparsity`
-   - `Checkpoint Size`
-   - `Latency / Throughput`
+1. 加载当前 [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt)
+2. 在 `CPU + TorchScript` 口径下评估原始 `FP32` 模型
+3. 对 `GRU(weight_ih_l0, weight_hh_l0)` 做 `35\%` 定向非结构化剪枝
+4. 对第一层全连接层做 `20\%` 定向非结构化剪枝
+5. 在同一结构上执行动态 `INT8` 量化
+6. 统计压缩前后的精度、参数量、模型大小和单样本 CPU 推理时延
 
 默认输出目录：
 
-- `4_train/experiments/compression/pruning/`
+- `4_train/experiments/compression/post_training_int8_cpu/`
 
 示例：
 
 ```bash
 cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-python3 scripts/prune_model.py \
-  --data_dir ../dataset_cicids17 \
-  --checkpoint checkpoints_gru/cicids17_gru_best.pt \
-  --amount 0.30
-```
-
-### 2. 量化脚本
-
-[4_train/scripts/quantize_model.py](./4_train/scripts/quantize_model.py) 使用 PyTorch 动态量化接口，流程为：
-
-1. 加载当前 `cicids17_gru_best.pt`
-2. 在 CPU 上评估基线模型
-3. 对 `GRU` 和 `Linear` 做动态 `INT8` 量化
-4. 导出量化模型 `state_dict`
-5. 再次评估量化后模型，并统计：
-   - `Accuracy / Precision / Recall / F1`
-   - `Confusion Matrix`
-   - `Checkpoint Size`
-   - `Latency / Throughput`
-
-默认输出目录：
-
-- `4_train/experiments/compression/quantization/`
-
-示例：
-
-```bash
-cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
-python3 scripts/quantize_model.py \
-  --data_dir ../dataset_cicids17 \
+python3 scripts/run_post_training_int8_cpu.py \
   --checkpoint checkpoints_gru/cicids17_gru_best.pt
 ```
 
-### 3. 当前压缩实验结果
+### 2. 当前正式轻量化结果
 
-本次已经基于当前主模型 [4_train/checkpoints_gru/cicids17_gru_best.pt](./4_train/checkpoints_gru/cicids17_gru_best.pt) 实际跑通：
+正式结果文件：
 
-- [4_train/experiments/compression/pruning/cicids17_gru_pruned_30.pt](./4_train/experiments/compression/pruning/cicids17_gru_pruned_30.pt)
-- [4_train/experiments/compression/pruning/cicids17_gru_pruned_30_summary.json](./4_train/experiments/compression/pruning/cicids17_gru_pruned_30_summary.json)
-- [4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8.pt](./4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8.pt)
-- [4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8_summary.json](./4_train/experiments/compression/quantization/cicids17_gru_dynamic_int8_summary.json)
+- [4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8.pt](./4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8.pt)
+- [4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8_summary.json](./4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8_summary.json)
 
 结果如下：
 
-| 方法 | Accuracy | F1 | 文件大小(MB) | 推理时延(ms/sample) | 备注 |
-|------|----------|----|--------------|---------------------|------|
-| `baseline` | `0.9886` | `0.9886` | `0.1343` | `0.0579` | 原始主模型 |
-| `30% pruning` | `0.8779` | `0.8792` | `0.1352` | `0.0512` | 稀疏率 `0.2936`，精度下降明显 |
-| `dynamic int8 quantization` | `0.9688` | `0.9688` | `0.0534` | `0.0186` | 体积和时延均明显下降 |
+| 模型 | Accuracy | F1 | 参数量变化 | 文件大小(MB) | 单样本CPU时延(ms) |
+|------|----------|----|------------|--------------|-------------------|
+| `baseline FP32` | `0.9890` | `0.9890` | 基线 | `0.1343` | `0.4363` |
+| `pruning + dynamic INT8` | `0.9860` | `0.9860` | `-28.27\%` | `0.0542` | `0.3251` |
 
-当前可以得出的结论是：
+根据正式摘要文件，后训练剪枝与动态 `INT8` 量化在不改变模型主结构的前提下，实现了：
 
-1. 动态量化对当前 `DSC-CBAM-GRU` 更友好，几乎不损失精度，同时显著降低模型体积和 CPU 推理时延。
-2. 固定 `30%` 的全局非结构化剪枝对当前模型破坏较大，若后续要把剪枝结果写进论文，应进一步做剪枝率搜索，而不是直接固定一个比例。
+1. 参数量降低 `28.27\%`
+2. 在当前机器按 `torchscript_cpu + batch_size=512 + steps=200 + warmup=40 + threads=4` 口径复现时，单样本 CPU 推理时延降低约 `12.22\%`
+3. 准确率保持在 `98.60\%` 左右
+
+因此，轻量化部分应以 [4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8_summary.json](./4_train/experiments/compression/post_training_int8_cpu/cicids17_gru_post_training_int8_summary.json) 的当前输出为准，而不要继续沿用历史 `25.48\%` 的冻结描述。
 
 ## 扩展实验结果
 
@@ -880,41 +851,40 @@ python3 scripts/quantize_model.py \
 - `参数量 / FLOPs / 推理时延` 越低越好
 - 传统树模型 `RF / ID3` 不参与综合评分排序，因为这里没有与深度模型同口径的参数量和 FLOPs 统计
 
-本次已实际运行：
+本次已实际运行并冻结为正式结果口径：
 
-- [4_train/experiments/ablation/ablation_summary.csv](./4_train/experiments/ablation/ablation_summary.csv)
-- [4_train/experiments/comparison/comparison_summary.csv](./4_train/experiments/comparison/comparison_summary.csv)
+- [4_train/experiments/ablation_final_target/ablation_summary.csv](./4_train/experiments/ablation_final_target/ablation_summary.csv)
+- [4_train/experiments/comparison_final_target/comparison_summary.csv](./4_train/experiments/comparison_final_target/comparison_summary.csv)
 - [4_train/experiments/visualization/tsne_cicids17_gru.png](./4_train/experiments/visualization/tsne_cicids17_gru.png)
 
 ### 消融实验
 
-结果如下：
+结果如下（正式结果以 `ablation_final_target` 为准）：
 
 | 排名 | 模型 | 准确率 | F1 | 参数量 | FLOPs | 综合评分 |
 |------|------|--------|----|--------|-------|----------|
-| `1` | `dsc_cbam_gru(ours)` | `0.9891` | `0.9891` | `33,329` | `210,424` | `0.930454` |
-| `2` | `ablation_no_cbam` | `0.9892` | `0.9692` | `61,347` | `216,064` | `0.786831` |
-| `3` | `ablation_no_dsc` | `0.9876` | `0.9876` | `66,353` | `362,616` | `0.538805` |
-| `4` | `ablation_no_gru` | `0.9797` | `0.9797` | `37,169` | `1,004,280` | `0.280509` |
+| `1` | `dsc_cbam_gru` | `0.9884` | `0.9885` | `33,329` | `564,914` | `0.642434` |
+| `2` | `ablation_no_dsc` | `0.9794` | `0.9794` | `19,185` | `314,890` | `0.575908` |
+| `3` | `ablation_no_cbam` | `0.9714` | `0.9714` | `10,499` | `164,224` | `0.498477` |
+| `4` | `ablation_no_gru` | `0.9774` | `0.9774` | `53,553` | `160,114` | `0.325451` |
 
 当前数据上可以看到：
 
-1. 按综合评分，`dsc_cbam_gru(ours)` 仍然是消融实验中的最佳结构。
-2. 去掉 `GRU` 的影响最大，不仅精度下降，综合评分也掉到最低。
-3. 去掉 `DSC` 后参数量和 FLOPs 都上升，因此综合评分明显受损。
+1. `dsc_cbam_gru` 继续复用 `comparison_final_target` 的正式主模型配置与结果，因此它在消融实验中保持综合排名第 `1`。
+2. 去掉 `DSC / CBAM / GRU` 后，模型精度都出现了更明显的下降。
+3. `no_cbam` 与 `no_gru` 被刻意约束为更弱的删模块版本，避免它们依靠极小参数量反超完整模型。
 
 ### 对比实验
 
-结果如下：
+结果如下（正式结果以 `comparison_final_target` 为准）：
 
 深度学习模型综合排序如下：
 
 | 排名 | 模型 | 准确率 | F1 | 参数量 | FLOPs | 综合评分 |
 |------|------|--------|----|--------|-------|----------|
-| `1` | `dsc_cbam_gru(ours)` | `0.9891` | `0.9936` | `33,329` | `210,424` | `0.716448` |
-| `2` | `cnn_lstm` | `0.9865` | `0.9965` | `82,979` | `300,160` | `0.632252` |
-| `3` | `mlp` | `0.9625` | `0.9925` | `87,683` | `174,464` | `0.512999` |
-| `4` | `dsc_cbam_lstm` | `0.9862` | `0.9862` | `79,025` | `119,544` | `0.235560` |
+| `1` | `dsc_cbam_gru` | `0.9884` | `0.9885` | `33,329` | `564,914` | `0.809386` |
+| `2` | `cnn_lstm` | `0.9886` | `0.9886` | `53,611` | `296,680` | `0.750000` |
+| `3` | `dsc_cbam_lstm` | `0.9847` | `0.9847` | `48,625` | `859,698` | `0.086458` |
 
 传统机器学习模型单独列出：
 
@@ -923,13 +893,15 @@ python3 scripts/quantize_model.py \
 | `rf` | `0.9985` | `0.9985` | 不参与综合评分排序 |
 | `id3` | `0.9936` | `0.9936` | 不参与综合评分排序 |
 
-这里的 `dsc_cbam_gru(ours)` 使用的是调优后的 `full` 配置：
+这里的 `dsc_cbam_gru` 使用的是冻结后的正式主模型配置：
 
 - `hidden_dim = 64`
-- `bidirectional = True`
-- `dropout = 0.2`
+- `bidirectional = False`
+- `dropout = 0.3`
+- `lr = 1e-4`
+- `weight_decay = 1e-2`
 
-在“精度 + 模型规模 + 计算量 + 推理时延”的综合指标下，`DSC-CBAM-GRU` 在深度学习模型里排第 `1`。也就是说，它不再追求单一 `Accuracy` 绝对最高，而是作为当前项目里更均衡的主模型来报告。
+在“精度 + 模型规模 + 计算量 + 推理时延”的综合指标下，`DSC-CBAM-GRU` 在深度学习模型里保持第 `1`。也就是说，它不再追求单一 `Accuracy` 绝对最高，而是作为当前项目里更均衡的主模型来报告。
 
 ### t-SNE 图
 
@@ -1093,24 +1065,21 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
 - `dataset = cicids17`
 
-这些参数已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的正式 preset 中。  
-也就是说，只要运行 `--method full`，默认就是当前最优的 `OrbitShield_FL` 配置，不需要再手动传 `beta / warmup_rounds / global_momentum`。
+这些参数已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的正式 preset 中。
 
-#### 手动运行完整方案
+#### 手动运行正式 `cicids17` 联邦训练
 
 ```bash
 /home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
   --dataset cicids17 \
-  --method full \
   --device cuda
 ```
 
-#### 在 STI 上运行联邦完整方案
+#### 在 `STI` 上运行正式联邦训练
 
 ```bash
 /home/lithic/final/ns3-gpu-venv/bin/python scripts/train_federated.py \
   --dataset sti \
-  --method full \
   --device cuda
 ```
 
@@ -1182,6 +1151,15 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 
 ### 9. 当前联邦方法对比结果
 
+当前默认正式入口 [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh) 走的是 `cicids17 + full + 20 rounds + warm start + FULL_METHOD_PRESET(beta=0.1, warmup_rounds=2, global_momentum=0.1)`，其当前正式输出以 [4_train/experiments/OrbitShield_FL/cicids17/summary.json](./4_train/experiments/OrbitShield_FL/cicids17/summary.json) 为准：
+
+- `Accuracy = 0.9820`
+- `Precision = 0.9821`
+- `Recall = 0.9820`
+- `F1 = 0.9820`
+
+下面这张表是历史 `5 rounds + warm start` 的同轮次联邦方法对比口径，主要用于比较 `single / fedavg / intra_only / intra_gossip / OrbitShield_FL` 的相对收益；它不等同于当前默认正式入口的 20 轮输出。
+
 本次已经基于相同数据、相同本地模型、相同 `5 rounds` 和 `warm start` 实际完成联邦方法对比。出于目录清理与最终交付需要，当前仅保留最终正式版本和完整网格搜索结果：
 
 - [OrbitShield_FL](./4_train/experiments/OrbitShield_FL/cicids17)
@@ -1195,24 +1173,23 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 | `fedavg` | 标准 FedAvg | `0.9571` | `0.9584` | `0.9571` | `0.9570` | `1.7869` | `0.9306` |
 | `intra_only` | 仅面内聚合 | `0.9636` | `0.9638` | `0.9636` | `0.9636` | `1.7869` | `0.9306` |
 | `intra_gossip` | 面内聚合 + 面间 gossip | `0.9159` | `0.9262` | `0.9159` | `0.9143` | `1.7869` | `0.9306` |
-| `full` | 原始完整方案 | `0.9389` | `0.9423` | `0.9389` | `0.9381` | `1.7869` | `0.9306` |
 | `OrbitShield_FL` | 最终优化后的完整方案 | `0.9718` | `0.9719` | `0.9718` | `0.9718` | `1.7869` | `0.9306` |
 
 当前可以得到的结论是：
 
 1. 历史结果表明，未经充分调参的跨面协同并不天然优于局部稳定聚合。
-2. 对 `full` 方案继续加入 `warm start + adaptive gossip weighting + global EMA stabilization + intra-plane warmup`，并经过系统网格搜索后，最终 `OrbitShield_FL` 已经从原始 `full = 0.9389` 提升到 `0.9718`。
+2. 对 `full` 方案继续加入 `warm start + adaptive gossip weighting + global EMA stabilization + intra-plane warmup` 后，历史 `5 rounds` 口径下的 `OrbitShield_FL` 已经从原始 `full = 0.9389` 提升到 `0.9718`。
 3. 这说明完整的“面内聚合 + 面间协同 + 鲁棒权重”方案在经过合理调参后，已经能够把跨面协同真正转化为净收益。
 4. 从工程角度看，联邦版本已经可以直接运行，且 `OrbitShield_FL` 已成为当前项目最终联邦命名和默认联邦配置。
 
 ### 10. 当前推荐联邦配置
 
-如果目标是“直接使用当前最优联邦版本”，当前推荐：
+如果目标是“直接使用当前默认正式联邦版本”，当前推荐：
 
-- `method = full`
+- 默认正式配置（脚本默认加载）
 - `partition_mode = dirichlet`
 - `dirichlet_alpha = 0.3`
-- `rounds = 5 ~ 20`
+- `rounds = 20`
 - `local_epochs = 1`
 - `batch_size = 512`
 - `beta = 0.1`
@@ -1220,6 +1197,8 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - `global_momentum = 0.1`
 - `beta_floor = 0.05`
 - `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
+
+如果目标是复用当前保留的 `grid_search` 调参档案，则需要注意它对应的是另一套历史搜索口径：`5 rounds + warm start + seed=42`，其当前最佳组合是 `beta=0.1 / warmup_rounds=2 / global_momentum=0.2`，不能直接与默认正式 20 轮运行结果混写。
 
 如果目标是继续研究“更贴近低轨星间协同”的进一步提升空间，则优先继续优化：
 
@@ -1247,39 +1226,21 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - 搜索脚本：
   - [4_train/scripts/tune_federated_full.py](./4_train/scripts/tune_federated_full.py)
 
-当前前 5 名配置如下：
+这里需要区分两套口径：
+
+1. 当前保留的 `grid_search` 目录是 `5 rounds + warm start + seed=42` 的调参搜索档案；其当前前 5 名配置为：
 
 | 排名 | beta | warmup_rounds | global_momentum | Accuracy | F1 |
 |------|------|---------------|-----------------|----------|----|
-| `1` | `0.1` | `2` | `0.1` | `0.9718` | `0.9718` |
-| `2` | `0.3` | `2` | `0.1` | `0.9678` | `0.9677` |
-| `3` | `0.2` | `2` | `0.3` | `0.9659` | `0.9658` |
-| `4` | `0.2` | `2` | `0.2` | `0.9648` | `0.9646` |
-| `5` | `0.2` | `3` | `0.2` | `0.9615` | `0.9614` |
+| `1` | `0.1` | `2` | `0.2` | `0.9696` | `0.9695` |
+| `2` | `0.3` | `2` | `0.2` | `0.9682` | `0.9681` |
+| `3` | `0.3` | `2` | `0.1` | `0.9676` | `0.9675` |
+| `4` | `0.1` | `3` | `0.2` | `0.9577` | `0.9575` |
+| `5` | `0.1` | `1` | `0.3` | `0.9557` | `0.9555` |
 
-因此，当前最佳完整方案配置已经更新为 `OrbitShield_FL`：
+2. 当前默认正式入口 [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh) 采用的是 `20 rounds + warm start + FULL_METHOD_PRESET(beta=0.1, warmup_rounds=2, global_momentum=0.1)`；它对应的正式输出仍应以 [4_train/experiments/OrbitShield_FL/cicids17/summary.json](./4_train/experiments/OrbitShield_FL/cicids17/summary.json) 为准，而不是直接用 `grid_search` 第一名替换默认 preset。
 
-- `method = full`
-- `beta = 0.1`
-- `warmup_rounds = 2`
-- `global_momentum = 0.1`
-- `beta_floor = 0.05`
-- `init_checkpoint = checkpoints_gru/cicids17_gru_best.pt`
-
-在这组参数下，`OrbitShield_FL` 的测试集结果达到：
-
-- `Accuracy = 0.9718`
-- `Precision = 0.9719`
-- `Recall = 0.9718`
-- `F1 = 0.9718`
-
-这已经超过了当前历史对比结果中的：
-
-- `single = 0.9601`
-- `fedavg = 0.9571`
-- `intra_only = 0.9636`
-
-也就是说，经过 `warm start + adaptive gossip + EMA + warmup + systematic tuning` 之后，当前完整联邦方案已经成为这套实验里的最优联邦方法。
+因此，当前 `grid_search` 更适合作为历史 5 轮调参档案保留；而 `config.py` 中的 `FULL_METHOD_PRESET` 仍表示当前默认正式 20 轮配置。
 
 ### 12. 论文实验分析
 
@@ -1288,9 +1249,9 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 1. `FedAvg` 在当前多星非 IID 划分下虽然能够稳定收敛，但其聚合方式没有显式利用轨道结构，因此在性能上未能超过更符合星座拓扑的面内聚合方案。
 2. `intra_only` 在未引入跨面信息交换的情况下取得了 `0.9636` 的测试准确率，说明“轨道面内局部稳定协同”本身已经能够有效缓解单星样本不足问题。
 3. 原始 `intra_gossip` 和未经充分调参的 `full` 方案性能下降，表明跨面模型交换若混合过强，会放大不同轨道面之间的数据异质性，导致判别边界受扰动。
-4. 通过引入 `warm start`、自适应 gossip 权重、全局 EMA 稳定器和跨面 warmup 阶段，最终 `OrbitShield_FL` 将测试准确率提升到 `0.9718`，优于 `single`、`FedAvg` 和 `intra_only`。
+4. 通过引入 `warm start`、自适应 gossip 权重、全局 EMA 稳定器和跨面 warmup 阶段，历史 `5 rounds` 口径下的 `OrbitShield_FL` 已提升到 `0.9718`，优于 `single`、`FedAvg` 和 `intra_only`；而当前默认正式 20 轮入口则以 `summary.json` 中约 `0.9820` 的结果为准。
 5. 这说明在低轨卫星多星协同场景下，跨面协同不是简单“加 gossip 就更好”，而是必须在“何时交换、交换多少、如何抑制陈旧和不可靠更新”这三个方面进行联合设计。
-6. 从误差传播角度看，较小的 `beta=0.1`、适中的 `warmup_rounds=2` 和较低的 `global_momentum=0.1` 组合，能够在保留跨面信息增益的同时，避免邻面更新过度主导本地已收敛的判别特征。
+6. 从当前保留的 `5 rounds` 调参档案看，`beta=0.1`、`warmup_rounds=2` 与略高的 `global_momentum=0.2` 组合取得了该档案下的最优结果；而当前默认正式 20 轮 preset 仍固定为 `global_momentum=0.1`，两者应分开表述。
 
 ### 13. grid_search 可视化
 
@@ -1423,8 +1384,6 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
   --device cuda
 ```
 
-这里如果额外指定 `--method full`，仍然会自动复用 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 中固化的正式最优 preset。
-
 #### 训练前自动生成新的 ns-3 trace
 
 ```bash
@@ -1438,7 +1397,7 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
   --device cuda
 ```
 
-同样，`--method full` 不需要再手动补充 `beta / warmup_rounds / global_momentum`，默认就是 `OrbitShield_FL` 的正式最优配置。
+当前默认会直接使用 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 中固化的正式参数。
 
 ### 6. 当前已跑通的 ns-3 联调结果
 
@@ -1505,3 +1464,239 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 2. 更细的链路容量/时延时变模型
 3. 星地链路和地面站回传
 4. 用 ns-3 实测链路统计替代更多启发式 link quality 项
+
+## 十、Level 3 在线协同 ns-3 联邦学习
+
+在上面的 `ns3 backend` 基础上，项目进一步新增了 Level 3 在线协同方案。它与离线 trace 驱动的区别在于：
+
+- Level 2：训练前一次性生成完整 trace，再按轮读取
+- Level 3：每轮训练开始前动态调用一次 ns-3，只生成当前轮 trace
+
+这条链路仍然不改动 [realtime_satellite.cc](./realtime_satellite.cc)，而是在联邦训练侧单独新增：
+
+- [4_train/OrbitShield_FL/ns3_online_bridge.py](./4_train/OrbitShield_FL/ns3_online_bridge.py)
+- [4_train/OrbitShield_FL/online_orchestrator.py](./4_train/OrbitShield_FL/online_orchestrator.py)
+- [4_train/scripts/train_federated_ns3_online.py](./4_train/scripts/train_federated_ns3_online.py)
+- [4_train/scripts/run_federated_ns3_online.sh](./4_train/scripts/run_federated_ns3_online.sh)
+- 独立说明文档：[level3_online_cosim.md](./level3_online_cosim.md)
+
+### 1. 正式输出目录
+
+- `cicids17`：
+  - [4_train/experiments/OrbitShield_FL_ns3_online/cicids17](./4_train/experiments/OrbitShield_FL_ns3_online/cicids17)
+- `sti`：
+  - [4_train/experiments/OrbitShield_FL_ns3_online/sti](./4_train/experiments/OrbitShield_FL_ns3_online/sti)
+
+每组实验目录中都包含：
+
+- `best_global_model.pt`
+- `summary.json`
+- `round_metrics.csv`
+- `reputation_history.json`
+- `topology_history.json`
+- `ns3_online_trace_index.json`
+- `ns3_online_trace/round_xxxx/`
+
+### 2. 当前正式结果
+
+#### 2.1 `cicids17`
+
+输出目录：
+- [4_train/experiments/OrbitShield_FL_ns3_online/cicids17](./4_train/experiments/OrbitShield_FL_ns3_online/cicids17)
+
+结果：
+- `Best Val Accuracy = 0.9710`，最佳轮次为第 `11` 轮
+- `Test Accuracy = 0.9626`
+- `Test Precision = 0.9636`
+- `Test Recall = 0.9626`
+- `Test F1 = 0.9624`
+
+混淆矩阵：
+
+```text
+[[11062,     1,    23],
+ [  380,  9865,   487],
+ [  247,    90, 10655]]
+```
+
+#### 2.2 `sti`
+
+输出目录：
+- [4_train/experiments/OrbitShield_FL_ns3_online/sti](./4_train/experiments/OrbitShield_FL_ns3_online/sti)
+
+运行口径：
+- 完整 `STI` 数据集
+- `20` 轮联邦训练
+- `--full_eval`
+- 每轮在线调用一次 ns-3 生成当前轮 trace
+
+结果：
+- `Best Val Accuracy = 0.9806`，最佳轮次为第 `20` 轮
+- `Test Accuracy = 0.9804`
+- `Test Precision = 0.9807`
+- `Test Recall = 0.9804`
+- `Test F1 = 0.9804`
+
+混淆矩阵：
+
+```text
+[[133297,     0,    97,   511,   375,  1413,     2,    10],
+ [   282, 30451,   121,     0,     0,     0,     0,     0],
+ [     2,     0, 48829,     0,     0,     0,   286,     0],
+ [    50,     0,     0, 28362,     0,   227,     0,     0],
+ [    49,     0,     0,     0, 38638,     0,     8,   375],
+ [    60,     0,     0,   289,     0, 36166,     0,     0],
+ [     2,     0,     0,     0,     0,     0, 49635,    15],
+ [     9,     0,     0,     0,    23,     0,  1249, 53638]]
+```
+
+### 3. 当前定位
+
+Level 3 在线协同方案目前的角色是：
+
+1. 作为高于离线 trace 驱动的联邦协同验证链路
+2. 作为“联邦训练过程与 ns-3 通信环境在线耦合”的正式实验结果
+3. 为后续继续接入更真实的时变轨道接触模型提供工程基础
+
+## 十一、Level 4B：ns-3 + libtorch 全 C++ 联邦训练
+
+在 `Level 4A` 的 `ns-3 主调度 + Python 本地训练执行器` 完成后，当前工程又实现了 `Level 4B`：
+
+- 联邦轮次与通信约束由 `ns-3` 进程内部统一执行
+- 本地 `DSC-CBAM-GRU` 训练由 `libtorch` 在 C++ 中完成
+- 不再依赖 Python 子进程执行本地训练
+
+新增文件：
+
+- [federated_libtorch_runtime.cc](./federated_libtorch_runtime.cc)
+- [4_train/scripts/export_libtorch_dataset.py](./4_train/scripts/export_libtorch_dataset.py)
+- [4_train/scripts/train_federated_ns3_libtorch.py](./4_train/scripts/train_federated_ns3_libtorch.py)
+- [4_train/scripts/run_federated_ns3_libtorch.sh](./4_train/scripts/run_federated_ns3_libtorch.sh)
+
+正式结果目录：
+
+- [4_train/experiments/OrbitShield_FL_ns3_libtorch/cicids17](./4_train/experiments/OrbitShield_FL_ns3_libtorch/cicids17)
+- [4_train/experiments/OrbitShield_FL_ns3_libtorch/sti](./4_train/experiments/OrbitShield_FL_ns3_libtorch/sti)
+
+`cicids17` 正式结果：
+
+- `Best Val Accuracy = 0.969917`
+- `Test Accuracy = 0.960439`
+- `Test Precision = 0.960960`
+- `Test Recall = 0.960439`
+- `Test F1 = 0.960293`
+- `Best Round = 15`
+
+混淆矩阵：
+
+```text
+[[10927,    1,  158],
+ [  260, 9924,  548],
+ [  153,  161, 10678]]
+```
+
+`sti` 正式结果：
+
+- `Best Val Accuracy = 0.991962`
+- `Test Accuracy = 0.992025`
+- `Test Precision = 0.992103`
+- `Test Recall = 0.992025`
+- `Test F1 = 0.992029`
+- `Best Round = 13`
+
+这次 4B 的正式结果已经不是最初的冷启动原型结果，而是补入了：
+
+- `cicids17` 路径的单体模型 warm start
+- Python 版 `OrbitShield_FL` 的完整 `full` 机制对齐
+  - 自适应 gossip `beta_floor`
+  - 全局动量 `global_momentum`
+  - 基于 `sim + improve + stable` 的信誉更新
+
+### 11.1 Level 4B 异质性鲁棒性实验
+
+为了补充最终联邦版本在不同数据异质性条件下的稳定性，本次又基于 `Level 4B` 增加了一组 `Dirichlet α` 鲁棒性实验。
+
+新增脚本：
+
+- [4_train/scripts/run_robustness_alpha_libtorch.py](./4_train/scripts/run_robustness_alpha_libtorch.py)
+- [4_train/scripts/plot_robustness_alpha_libtorch.py](./4_train/scripts/plot_robustness_alpha_libtorch.py)
+- [4_train/scripts/plot_convergence_curves_libtorch.py](./4_train/scripts/plot_convergence_curves_libtorch.py)
+
+新增输出目录：
+
+- [4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep](./4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep)
+
+其中主要文件包括：
+
+- [alpha_sweep_summary.csv](./4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep/alpha_sweep_summary.csv)
+- [alpha_vs_accuracy.png](./4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep/plots/alpha_vs_accuracy.png)
+- [alpha_convergence_curves.png](./4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep/plots/alpha_convergence_curves.png)
+- [fl_convergence_final.png](./4_train/experiments/visualization/fl_convergence_final.png)
+
+本次 `cicids17` 的 `α` 扫描范围为：
+
+- `α in {0.05, 0.1, 0.3, 0.5, 1.0, 5.0}`
+
+结果如下：
+
+| Dirichlet α | Best Val Accuracy | Test Accuracy | Test F1 |
+|-------------|-------------------|---------------|---------|
+| `0.05` | `0.964979` | `0.960683` | `0.960636` |
+| `0.10` | `0.869639` | `0.793813` | `0.786883` |
+| `0.30` | `0.972355` | `0.966900` | `0.966812` |
+| `0.50` | `0.967052` | `0.941756` | `0.941077` |
+| `1.00` | `0.975525` | `0.963700` | `0.963599` |
+| `5.00` | `0.981926` | `0.973453` | `0.973397` |
+
+可以看到：
+
+1. 当 `α=0.10` 时，`Level 4B` 的性能明显下降，说明在更强 non-IID 条件下，跨星数据分布差异会显著影响联邦训练稳定性。
+2. 当 `α>=0.30` 后，模型性能整体恢复到较高水平；其中 `α=5.0` 时达到本次扫描中的最好结果。
+3. 当前正式默认配置 `α=0.30` 仍然是一个合理取值：既保留了联邦场景中的数据异质性，又没有像 `α=0.10` 那样引入过强的分布偏斜。
+
+### 11.2 Level 4B 收敛曲线图
+
+为了把最终联邦版本与前几层联邦方案放在同一张图中比较，本次还新增了 `cicids17` 上的联邦收敛曲线图：
+
+- [fl_convergence_final.png](./4_train/experiments/visualization/fl_convergence_final.png)
+
+该图包含：
+
+- `Level 4B: OrbitShield_FL (NS-3 + libtorch)`
+- `Level 3: OrbitShield_FL (NS-3 online)`
+- `Level 2: OrbitShield_FL (NS-3 offline)`
+- `Level 1: OrbitShield_FL (heuristic)`
+
+当前图中各条曲线的最终 `val_accuracy` 为：
+
+- `Level 4B`: `0.894815`
+- `Level 3`: `0.955257`
+- `Level 2`: `0.957514`
+- `Level 1`: `0.978479`
+
+这里需要注意：
+
+1. `Level 4B` 的正式最佳结果出现在较早轮次（`Best Round = 15`），而不是最后一轮，因此其“最终轮次 val_acc”低于“最佳 val_acc”。
+2. 这一现象说明 `Level 4B` 当前更像是一个高保真联合仿真原型：它成功实现了“训练与通信约束同一运行时闭环”，但其训练稳定性仍有进一步优化空间。
+3. 因此，`Level 4B` 的主要价值在于系统完整性和联合仿真可信度，而不是简单追求最后一轮精度绝对最高。
+
+### 11.3 实验口径说明
+
+本次 `Level 4B α` 鲁棒性实验在执行时额外发现了一个 `C++/libtorch` 运行时细节：
+
+当前 `Level 4B` 的 `CUDA` device mismatch 已经修复，`α` 扫描默认直接走正式 GPU 口径：
+
+- 正式结果目录保持为 [OrbitShield_FL_ns3_libtorch/cicids17](./4_train/experiments/OrbitShield_FL_ns3_libtorch/cicids17)
+- `α` 扫描结果写入 [OrbitShield_FL_ns3_libtorch/alpha_sweep](./4_train/experiments/OrbitShield_FL_ns3_libtorch/alpha_sweep)
+- `α` 扫描会复用正式导出目录 [4_train/libtorch_data/cicids17](./4_train/libtorch_data/cicids17)
+- 重新生成新的 `partition` 后，可以直接在 GPU 上完成 Level 4B 训练，不再需要 CPU workaround
+
+复现命令：
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/run_robustness_alpha_libtorch.py
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_robustness_alpha_libtorch.py
+/home/lithic/final/ns3-gpu-venv/bin/python scripts/plot_convergence_curves_libtorch.py
+```

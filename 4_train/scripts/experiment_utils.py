@@ -39,11 +39,60 @@ def load_window_data(data_dir: str):
     return load_npz_data(data_dir)
 
 
+def _stratified_subset(
+    x: np.ndarray,
+    y: np.ndarray,
+    max_samples: int,
+    seed: int = 42,
+) -> tuple[np.ndarray, np.ndarray]:
+    if max_samples is None or len(y) <= max_samples:
+        return x, y
+
+    rng = np.random.default_rng(seed)
+    classes, counts = np.unique(y, return_counts=True)
+    proportions = counts / counts.sum()
+    target = np.maximum(1, np.floor(proportions * max_samples).astype(int))
+    target = np.minimum(target, counts)
+
+    while target.sum() < max_samples:
+        deficits = counts - target
+        candidates = np.where(deficits > 0)[0]
+        if len(candidates) == 0:
+            break
+        best = candidates[np.argmax(proportions[candidates] - (target[candidates] / max_samples))]
+        target[best] += 1
+
+    while target.sum() > max_samples:
+        candidates = np.where(target > 1)[0]
+        if len(candidates) == 0:
+            break
+        worst = candidates[np.argmax(target[candidates] / max_samples - proportions[candidates])]
+        target[worst] -= 1
+
+    selected = []
+    for cls, take in zip(classes, target):
+        cls_indices = np.flatnonzero(y == cls)
+        if take >= len(cls_indices):
+            chosen = cls_indices
+        else:
+            chosen = rng.choice(cls_indices, size=int(take), replace=False)
+        selected.append(np.sort(chosen))
+
+    indices = np.sort(np.concatenate(selected))
+    return x[indices], y[indices]
+
+
 def make_window_loaders(
     data_dir: str,
     batch_size: int = 64,
+    max_samples: int | None = None,
+    seed: int = 42,
 ):
     x_train, y_train, x_val, y_val, x_test, y_test = load_window_data(data_dir)
+    if max_samples is not None:
+        x_train, y_train = _stratified_subset(x_train, y_train, max_samples, seed=seed)
+        x_val, y_val = _stratified_subset(x_val, y_val, max_samples, seed=seed + 1)
+        x_test, y_test = _stratified_subset(x_test, y_test, max_samples, seed=seed + 2)
     loaders = create_dataloaders(
         x_train,
         y_train,
@@ -56,6 +105,33 @@ def make_window_loaders(
         pin_memory=False,
     )
     return (x_train, y_train, x_val, y_val, x_test, y_test), loaders
+
+
+def benchmark_inference_latency(
+    model: nn.Module,
+    sample_shape: tuple[int, int, int],
+    device: torch.device,
+    warmup_iters: int = 20,
+    measure_iters: int = 100,
+) -> float:
+    """Measure pure forward latency per batch in seconds."""
+    model.eval()
+    dummy = torch.randn(*sample_shape, device=device)
+
+    with torch.no_grad():
+        for _ in range(warmup_iters):
+            _ = model(dummy)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+
+        start = time.perf_counter()
+        for _ in range(measure_iters):
+            _ = model(dummy)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+        elapsed = time.perf_counter() - start
+
+    return elapsed / measure_iters
 
 
 def train_deep_model(
@@ -78,9 +154,13 @@ def train_deep_model(
     history = trainer.train(train_loader, val_loader, num_epochs=epochs, save_path=save_path)
     train_time = time.time() - start_time
 
-    eval_start = time.time()
     metrics = trainer.evaluate(test_loader)
-    inference_time = time.time() - eval_start
+    first_batch = next(iter(test_loader))[0]
+    inference_time = benchmark_inference_latency(
+        model,
+        sample_shape=tuple(first_batch.shape),
+        device=device,
+    )
 
     return {
         "history": history,
@@ -157,6 +237,25 @@ def _normalize_lower(values: list[float]) -> list[float]:
     if high == low:
         return [1.0 for _ in values]
     return [(high - value) / (high - low) for value in values]
+
+
+def add_metric_ranks(rows: list[dict[str, Any]], metrics: list[str] | None = None) -> list[dict[str, Any]]:
+    metrics = metrics or ["accuracy", "f1"]
+    deep_rows = []
+    for row in rows:
+        if all(_safe_float(row.get(metric)) is not None for metric in metrics):
+            deep_rows.append(row)
+
+    for metric in metrics:
+        ranked = sorted(deep_rows, key=lambda row: float(row[metric]), reverse=True)
+        for rank, row in enumerate(ranked, start=1):
+            row[f"{metric}_rank"] = rank
+
+    for row in rows:
+        for metric in metrics:
+            row.setdefault(f"{metric}_rank", "n/a")
+
+    return rows
 
 
 def add_composite_scores(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:

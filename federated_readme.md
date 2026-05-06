@@ -576,16 +576,26 @@
 
 ## 14. 当前正式结果
 
+当前默认正式入口是 [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh)，其默认行为为：
+
+- `dataset = cicids17`
+- `method = full`
+- `rounds = 20`
+- `warm start = checkpoints_gru/cicids17_gru_best.pt`
+- `FULL_METHOD_PRESET = beta 0.1 / warmup_rounds 2 / global_momentum 0.1`
+
 当前最终联邦版本目录：
 
 - [4_train/experiments/OrbitShield_FL/cicids17](./4_train/experiments/OrbitShield_FL/cicids17)
 
-当前正式结果为：
+当前正式结果为（以 [summary.json](./4_train/experiments/OrbitShield_FL/cicids17/summary.json) 为准）：
 
-- `Accuracy = 0.9718`
-- `Precision = 0.9719`
-- `Recall = 0.9718`
-- `F1 = 0.9718`
+- `Accuracy = 0.9820`
+- `Precision = 0.9821`
+- `Recall = 0.9820`
+- `F1 = 0.9820`
+
+下表中的 `0.9718` 属于历史 `5 rounds` 联邦方法对比口径，用于同轮次比较，不等同于当前默认 `run_federated.sh` 的 20 轮正式输出。
 
 历史方法对比结果如下：
 
@@ -617,25 +627,31 @@
 - [grid_search_summary.csv](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_summary.csv)
 - [grid_search_results.json](./4_train/experiments/OrbitShield_FL/grid_search/grid_search_results.json)
 
-当前最优配置为：
+这里需要区分两套口径：
 
-- `beta = 0.1`
-- `warmup_rounds = 2`
-- `global_momentum = 0.1`
-- `beta_floor = 0.05`
+1. 当前保留的 `grid_search` 档案使用的是 `5 rounds + warm start + seed=42` 搜索设置；其当前最优组合为：
+   - `beta = 0.1`
+   - `warmup_rounds = 2`
+   - `global_momentum = 0.2`
+   - `best_test_accuracy = 0.969613`
 
-这套参数就是当前正式版 `OrbitShield_FL` 的来源。
-并且它已经固化在 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 的 `full` 正式 preset 中。
+2. 当前默认正式入口 [4_train/scripts/run_federated.sh](./4_train/scripts/run_federated.sh) 采用的是 `20 rounds + warm start + FULL_METHOD_PRESET`；其正式默认参数仍为：
+   - `beta = 0.1`
+   - `warmup_rounds = 2`
+   - `global_momentum = 0.1`
+   - `beta_floor = 0.05`
+
+也就是说，`grid_search` 目录是保留下来的历史 `5 rounds` 调参档案，而 [4_train/OrbitShield_FL/config.py](./4_train/OrbitShield_FL/config.py) 中的 `FULL_METHOD_PRESET` 仍对应当前默认正式 20 轮运行口径。
 
 前 5 组配置如下：
 
 | 排名 | beta | warmup_rounds | global_momentum | Accuracy | F1 |
 |------|------|---------------|-----------------|----------|----|
-| `1` | `0.1` | `2` | `0.1` | `0.9718` | `0.9718` |
-| `2` | `0.3` | `2` | `0.1` | `0.9678` | `0.9677` |
-| `3` | `0.2` | `2` | `0.3` | `0.9659` | `0.9658` |
-| `4` | `0.2` | `2` | `0.2` | `0.9648` | `0.9646` |
-| `5` | `0.2` | `3` | `0.2` | `0.9615` | `0.9614` |
+| `1` | `0.1` | `2` | `0.2` | `0.9696` | `0.9695` |
+| `2` | `0.3` | `2` | `0.2` | `0.9682` | `0.9681` |
+| `3` | `0.3` | `2` | `0.1` | `0.9676` | `0.9675` |
+| `4` | `0.1` | `3` | `0.2` | `0.9577` | `0.9575` |
+| `5` | `0.1` | `1` | `0.3` | `0.9557` | `0.9555` |
 
 ## 16. 可视化结果
 
@@ -654,8 +670,8 @@
 从当前结果看：
 
 - 较小的 `beta` 更稳
-- `warmup_rounds = 2` 最合适
-- 较小的 `global_momentum = 0.1` 更有利于稳定提升
+- `warmup_rounds = 2` 仍然是较合理的折中
+- 当前保留的 `5 rounds` 调参档案里，`global_momentum = 0.2` 取得了更高的 top-1；但默认正式 20 轮 preset 仍固定为 `global_momentum = 0.1`，两者需要分开理解
 
 ## 17. 推荐运行命令
 
@@ -736,7 +752,7 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 - 陈旧度衰减
 - 全局 EMA 稳定器
 
-在这些机制共同作用下，跨面协同从噪声源转变为有效增益，最终将测试准确率提升到 `0.9718`。这说明在低轨卫星协同威胁预测中，真正重要的不是“是否做联邦”，而是“如何把轨道结构、连接断续性和更新可信度共同编码进联邦聚合过程”。
+在这些机制共同作用下，跨面协同从噪声源转变为有效增益：历史 `5 rounds` 口径下，`OrbitShield_FL` 将测试准确率提升到 `0.9718`；而当前默认正式 20 轮入口则应以 `OrbitShield_FL/cicids17/summary.json` 中约 `0.9820` 的结果为准。这说明在低轨卫星协同威胁预测中，真正重要的不是“是否做联邦”，而是“如何把轨道结构、连接断续性和更新可信度共同编码进联邦聚合过程”。
 
 ## 19. 后续可扩展方向
 
@@ -991,3 +1007,158 @@ cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/
 1. 作为更高可信度的通信环境验证链路
 2. 作为后续论文中“算法在更真实低轨通信条件下仍可运行”的支撑实验
 3. 作为后续继续扩展星地链路、时变容量和更真实接触图的基础工程框架
+
+## 28. Level 3 在线协同 ns-3 扩展
+
+在离线 trace 驱动版本之外，当前工程又新增了一条 Level 3 在线协同链路。它的核心区别是：
+
+- 不是先一次性生成完整 `20` 轮 trace
+- 而是在每一轮训练开始前动态调用一次 ns-3
+- 仅生成当前轮 trace，再立即用于本轮联邦训练
+
+新增模块如下：
+
+- [4_train/OrbitShield_FL/ns3_online_bridge.py](./4_train/OrbitShield_FL/ns3_online_bridge.py)
+- [4_train/OrbitShield_FL/online_orchestrator.py](./4_train/OrbitShield_FL/online_orchestrator.py)
+- [4_train/scripts/train_federated_ns3_online.py](./4_train/scripts/train_federated_ns3_online.py)
+- [4_train/scripts/run_federated_ns3_online.sh](./4_train/scripts/run_federated_ns3_online.sh)
+- 说明文档：[level3_online_cosim.md](./level3_online_cosim.md)
+
+因此，Level 3 更适合表述为：
+
+- `online ns-3 co-simulation for federated learning`
+- `in-the-loop communication-aware federated training`
+
+## 29. Level 3 正式结果
+
+### 29.1 `cicids17`
+
+输出目录：
+- [4_train/experiments/OrbitShield_FL_ns3_online/cicids17](./4_train/experiments/OrbitShield_FL_ns3_online/cicids17)
+
+结果：
+- `Best Val Accuracy = 0.9710`，最佳轮次第 `11` 轮
+- `Test Accuracy = 0.9626`
+- `Test Precision = 0.9636`
+- `Test Recall = 0.9626`
+- `Test F1 = 0.9624`
+
+混淆矩阵：
+
+```text
+[[11062,     1,    23],
+ [  380,  9865,   487],
+ [  247,    90, 10655]]
+```
+
+### 29.2 `sti`
+
+输出目录：
+- [4_train/experiments/OrbitShield_FL_ns3_online/sti](./4_train/experiments/OrbitShield_FL_ns3_online/sti)
+
+运行口径：
+- 完整 `STI` 数据
+- `20` 轮联邦训练
+- `--full_eval`
+- 每轮在线生成当前轮 ns-3 trace
+
+结果：
+- `Best Val Accuracy = 0.9806`，最佳轮次第 `20` 轮
+- `Test Accuracy = 0.9804`
+- `Test Precision = 0.9807`
+- `Test Recall = 0.9804`
+- `Test F1 = 0.9804`
+
+混淆矩阵：
+
+```text
+[[133297,     0,    97,   511,   375,  1413,     2,    10],
+ [   282, 30451,   121,     0,     0,     0,     0,     0],
+ [     2,     0, 48829,     0,     0,     0,   286,     0],
+ [    50,     0,     0, 28362,     0,   227,     0,     0],
+ [    49,     0,     0,     0, 38638,     0,     8,   375],
+ [    60,     0,     0,   289,     0, 36166,     0,     0],
+ [     2,     0,     0,     0,     0,     0, 49635,    15],
+ [     9,     0,     0,     0,    23,     0,  1249, 53638]]
+```
+
+## 30. 当前结论补充
+
+到目前为止，`OrbitShield_FL` 已形成三层联邦实验结构：
+
+1. 启发式动态拓扑联邦
+2. 离线 ns-3 trace 驱动联邦
+3. 在线 ns-3 协同联邦
+
+其中 Level 3 的意义在于：
+
+- 进一步提高联邦训练过程对通信环境变化的敏感性
+- 将每轮联邦训练和当前轮通信状态绑定
+- 为后续更真实的低轨环境联邦实验提供独立入口，而不干扰已有正式结果
+
+## 31. Level 4B：ns-3 + libtorch 全 C++ 联邦训练
+
+在 `Level 4A` 的 `ns-3 主调度 + Python 本地训练执行器` 跑通之后，项目继续实现了 `Level 4B`：
+
+- `ns-3` 内部维护联邦轮次与通信约束
+- 本地模型训练直接由 `libtorch` 在 C++ 内完成
+- 不再依赖 Python 子进程执行本地训练
+
+新增文件：
+
+- [federated_libtorch_runtime.cc](./federated_libtorch_runtime.cc)
+- [4_train/scripts/export_libtorch_dataset.py](./4_train/scripts/export_libtorch_dataset.py)
+- [4_train/scripts/train_federated_ns3_libtorch.py](./4_train/scripts/train_federated_ns3_libtorch.py)
+- [4_train/scripts/run_federated_ns3_libtorch.sh](./4_train/scripts/run_federated_ns3_libtorch.sh)
+
+正式结果目录：
+
+- [4_train/experiments/OrbitShield_FL_ns3_libtorch/cicids17](./4_train/experiments/OrbitShield_FL_ns3_libtorch/cicids17)
+- [4_train/experiments/OrbitShield_FL_ns3_libtorch/sti](./4_train/experiments/OrbitShield_FL_ns3_libtorch/sti)
+
+`cicids17` 正式结果：
+
+- `Best Val Accuracy = 0.969917`
+- `Test Accuracy = 0.960439`
+- `Test Precision = 0.960960`
+- `Test Recall = 0.960439`
+- `Test F1 = 0.960293`
+- `Best Round = 15`
+
+混淆矩阵：
+
+```text
+[[10927,    1,  158],
+ [  260, 9924,  548],
+ [  153,  161, 10678]]
+```
+
+`sti` 正式结果：
+
+- `Best Val Accuracy = 0.991962`
+- `Test Accuracy = 0.992025`
+- `Test Precision = 0.992103`
+- `Test Recall = 0.992025`
+- `Test F1 = 0.992029`
+- `Best Round = 13`
+
+当前这版 `4B` 已经补入两项关键增强：
+
+1. `cicids17` 路径的单体模型预训练权重 warm start
+2. Python 版 `OrbitShield_FL` 的正式 `full` 机制对齐
+   - 自适应 gossip `beta_floor`
+   - 全局动量 `global_momentum`
+   - `sim + improve + stable` 信誉更新
+
+复现命令：
+
+```bash
+cd /home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/scratch/06_realtime_emulation/4_train
+./scripts/run_federated_ns3_libtorch.sh
+```
+
+这条链路的意义是：
+
+1. `ns-3` 不再只提供 trace，而是与训练运行时一起组成单个 C++ 联邦执行体
+2. 本地训练、参数聚合和通信约束都在同一进程内完成
+3. 这为后续从 `4B` 继续演进到更强的协议级或块级模型交换实验打下了基础

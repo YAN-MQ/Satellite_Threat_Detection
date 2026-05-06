@@ -13,5 +13,7 @@ cd "${SCRIPT_DIR}"
 
 exec "${VENV_PYTHON}" scripts/run_comparison.py \
   --data_dir ../dataset_cicids17 \
+  --output_dir experiments/comparison_final_target \
+  --include_traditional \
   --device cuda \
   "$@"

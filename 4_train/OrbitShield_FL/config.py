@@ -66,6 +66,12 @@ class FederatedConfig:
     output_dir: str = "experiments/OrbitShield_FL/cicids17"
     topology_backend: str = "heuristic"
     ns3_trace_dir: str | None = None
+    ns3_binary: str = (
+        "/home/lithic/final/ns3/ns-3-allinone/ns-3.46.1/build/scratch/06_realtime_emulation/"
+        "ns3.46.1-federated_constellation-optimized"
+    )
+    ns3_round_duration: float = 30.0
+    ns3_force_regenerate: bool = True
     method: str = "full"
     num_clients: int = 12
     num_planes: int = 3
@@ -78,6 +84,8 @@ class FederatedConfig:
     hidden_dim: int = 64
     bidirectional: bool = False
     dropout: float = 0.3
+    conv_dim: int = 32
+    dsc_dim: int = 64
     lr: float = 1e-3
     weight_decay: float = 1e-2
     init_checkpoint: str | None = "checkpoints_gru/cicids17_gru_best.pt"
@@ -118,7 +126,9 @@ class FederatedConfig:
             raise ValueError("num_clients must be divisible by num_planes")
         if self.method not in {"single", "fedavg", "intra_only", "intra_gossip", "full"}:
             raise ValueError(f"Unsupported method: {self.method}")
-        if self.topology_backend not in {"heuristic", "ns3"}:
+        if self.topology_backend not in {"heuristic", "ns3", "ns3_online"}:
             raise ValueError(f"Unsupported topology backend: {self.topology_backend}")
         if self.topology_backend == "ns3" and not self.ns3_trace_dir:
             raise ValueError("ns3_trace_dir must be provided when topology_backend='ns3'")
+        if self.topology_backend == "ns3_online" and not self.ns3_binary:
+            raise ValueError("ns3_binary must be provided when topology_backend='ns3_online'")

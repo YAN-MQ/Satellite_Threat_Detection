@@ -14,4 +14,6 @@ cd "${SCRIPT_DIR}"
 exec "${VENV_PYTHON}" scripts/run_ablation.py \
   --data_dir ../dataset_cicids17 \
   --device cuda \
+  --output_dir experiments/ablation_formal_tuned \
+  --comparison_config experiments/comparison_formal_tuned/comparison_results.json \
   "$@"

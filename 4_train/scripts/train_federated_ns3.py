@@ -59,6 +59,8 @@ def parse_args() -> argparse.Namespace:
     advanced.add_argument("--hidden_dim", type=int, default=64, help=argparse.SUPPRESS)
     advanced.add_argument("--bidirectional", action="store_true", default=False, help=argparse.SUPPRESS)
     advanced.add_argument("--dropout", type=float, default=0.3, help=argparse.SUPPRESS)
+    advanced.add_argument("--conv_dim", type=int, default=32, help=argparse.SUPPRESS)
+    advanced.add_argument("--dsc_dim", type=int, default=64, help=argparse.SUPPRESS)
     advanced.add_argument("--input_dim", type=int, default=None, help=argparse.SUPPRESS)
     advanced.add_argument("--num_classes", type=int, default=None, help=argparse.SUPPRESS)
     advanced.add_argument("--max_samples", type=int, default=None, help=argparse.SUPPRESS)
@@ -157,6 +159,8 @@ def main() -> None:
         hidden_dim=args.hidden_dim,
         bidirectional=args.bidirectional,
         dropout=args.dropout,
+        conv_dim=args.conv_dim,
+        dsc_dim=args.dsc_dim,
         lr=args.lr,
         weight_decay=args.weight_decay,
         init_checkpoint=None if args.from_scratch else (args.init_checkpoint if args.init_checkpoint is not None else profile.init_checkpoint),

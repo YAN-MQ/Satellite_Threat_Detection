@@ -38,6 +38,8 @@ class FederatedClient:
         hidden_dim: int,
         bidirectional: bool,
         dropout: float,
+        conv_dim: int,
+        dsc_dim: int,
         device: torch.device,
     ) -> None:
         self.client_id = client_id
@@ -54,6 +56,8 @@ class FederatedClient:
             hidden_dim=hidden_dim,
             bidirectional=bidirectional,
             dropout=dropout,
+            conv_dim=conv_dim,
+            dsc_dim=dsc_dim,
         )
         self.device = device
         self.model.to(self.device)

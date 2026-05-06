@@ -20,6 +20,10 @@ from dataset_profiles import get_dataset_profile
 from experiment_utils import resolve_device
 
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train DSC-CBAM-GRU on CICIDS17 or STI")
     parser.add_argument("--dataset", choices=["cicids17", "sti"], default="cicids17")
@@ -29,12 +33,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input_dim", type=int, default=None)
     parser.add_argument("--num_classes", type=int, default=None)
     parser.add_argument("--hidden_dim", type=int, default=64)
-    parser.add_argument("--bidirectional", action="store_true", default=False)
+    parser.add_argument(
+        "--bidirectional",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable bidirectional GRU; pass --no-bidirectional to force a single-direction GRU.",
+    )
     parser.add_argument("--dropout", type=float, default=0.3)
+    parser.add_argument("--conv_dim", type=int, default=32)
+    parser.add_argument("--dsc_dim", type=int, default=64)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--weight_decay", type=float, default=1e-2)
+    parser.add_argument("--early_stopping_patience", type=int, default=10)
     parser.add_argument("--device", default=None)
     parser.add_argument("--output", default=None)
+    parser.add_argument("--output_dir", default=None)
     parser.add_argument("--max_samples", type=int, default=None)
     return parser.parse_args()
 
@@ -42,11 +55,18 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     profile = get_dataset_profile(args.dataset)
-    data_dir = args.data_dir or profile.data_dir
+    data_dir = args.data_dir if args.data_dir else profile.data_dir
+    if not os.path.isabs(data_dir):
+        data_dir = os.path.join(PROJECT_DIR, data_dir)
     input_dim = args.input_dim or profile.input_dim
     num_classes = args.num_classes or profile.num_classes
     seq_len = profile.seq_len
-    output_path = args.output or profile.output_checkpoint
+    output_path = args.output if args.output else profile.output_checkpoint
+    if not os.path.isabs(output_path):
+        output_path = os.path.join(PROJECT_DIR, output_path)
+    if args.output_dir:
+        output_dir = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(PROJECT_DIR, args.output_dir)
+        output_path = os.path.join(output_dir, os.path.basename(output_path))
     device = resolve_device(args.device)
 
     print("=" * 60)
@@ -88,6 +108,8 @@ def main() -> None:
         hidden_dim=args.hidden_dim,
         bidirectional=args.bidirectional,
         dropout=args.dropout,
+        conv_dim=args.conv_dim,
+        dsc_dim=args.dsc_dim,
     )
     print(f"Parameters: {count_parameters(model):,}")
     print(f"Approx FLOPs: {count_flops(model, input_size=(1, seq_len, input_dim)):,}")
@@ -97,8 +119,15 @@ def main() -> None:
     scheduler = get_scheduler(optimizer, scheduler_name="plateau")
     trainer = Trainer(model, criterion, optimizer, scheduler, device)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    trainer.train(train_loader, val_loader, num_epochs=args.epochs, save_path=output_path)
+    output_dirname = os.path.dirname(output_path) or "."
+    os.makedirs(output_dirname, exist_ok=True)
+    trainer.train(
+        train_loader,
+        val_loader,
+        num_epochs=args.epochs,
+        save_path=output_path,
+        early_stopping_patience=args.early_stopping_patience,
+    )
     metrics = trainer.evaluate(test_loader)
 
     print("\nTest metrics")

@@ -45,6 +45,7 @@ struct SimulationConfig
     uint32_t numPlanes = 3;
     uint32_t satsPerPlane = 4;
     uint32_t rounds = 20;
+    uint32_t startRound = 1;
     double roundDurationSeconds = 30.0;
 
     std::string intraRate = "500Mbps";
@@ -245,13 +246,13 @@ class FederatedConstellationExporter
     void Run()
     {
         WriteConstellationConfig();
-        for (uint32_t round = 1; round <= m_config.rounds; ++round)
+        for (uint32_t localRound = 1; localRound <= m_config.rounds; ++localRound)
         {
             Simulator::Schedule(
-                Seconds((round - 1) * m_config.roundDurationSeconds),
+                Seconds((localRound - 1) * m_config.roundDurationSeconds),
                 &FederatedConstellationExporter::ExportRoundTrace,
                 this,
-                round);
+                m_config.startRound + localRound - 1);
         }
 
         Simulator::Stop(Seconds(m_config.rounds * m_config.roundDurationSeconds + 0.001));
@@ -626,6 +627,8 @@ class FederatedConstellationExporter
         Indent(out, 1);
         out << "\"rounds\": " << m_config.rounds << ",\n";
         Indent(out, 1);
+        out << "\"start_round\": " << m_config.startRound << ",\n";
+        Indent(out, 1);
         out << "\"round_duration_s\": " << m_config.roundDurationSeconds << ",\n";
         Indent(out, 1);
         out << "\"seed\": " << m_config.seed << ",\n";
@@ -752,6 +755,7 @@ main(int argc, char *argv[])
     cmd.AddValue("num-planes", "Number of orbital planes", config.numPlanes);
     cmd.AddValue("sats-per-plane", "Number of satellites in each orbital plane", config.satsPerPlane);
     cmd.AddValue("rounds", "Number of federated rounds to export", config.rounds);
+    cmd.AddValue("start-round", "Global round index used for the first exported round", config.startRound);
     cmd.AddValue("round-duration", "Duration of one federated round in seconds", config.roundDurationSeconds);
 
     cmd.AddValue("intra-rate", "Nominal intra-plane data rate, e.g. 500Mbps", config.intraRate);
@@ -787,7 +791,8 @@ main(int argc, char *argv[])
 
     std::cout << "=== OrbitShield_FL Federated Constellation Simulator ===" << std::endl;
     std::cout << "Planes: " << config.numPlanes << ", satellites/plane: " << config.satsPerPlane << std::endl;
-    std::cout << "Rounds: " << config.rounds << ", round duration: " << config.roundDurationSeconds << " s" << std::endl;
+    std::cout << "Rounds: " << config.rounds << ", start round: " << config.startRound
+              << ", round duration: " << config.roundDurationSeconds << " s" << std::endl;
     std::cout << "Output dir: " << config.outputDir << std::endl;
 
     FederatedConstellationExporter exporter(config);
