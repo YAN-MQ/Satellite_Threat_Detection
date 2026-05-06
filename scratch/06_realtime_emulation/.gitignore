@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# NS-3
+*.o
+*.a
+*.so
+*.dylib
+ns3/
+build/
+
+# Data and experiment artifacts
+*.pcap
+*.pcapng
+*.csv
+*.npz
+*.rar
+*.pdf
+fragments_window/
+captured_window/
+dataset_cicids17/
+dataset_sti/
+STI_dataset/
+experiments/
+4_train/experiments/
+4_train/libtorch_data/
+4_train/libtorch_init/
+4_train/checkpoints_gru_formal_tuned/*.pt
+
+# Legacy generic names
+fragments/
+captured/
+dataset/
+data/
+models/
+checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
